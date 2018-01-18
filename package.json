@@ -1,0 +1,30 @@
+{
+  "name": "axios-resource",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "npm test",
+    "lint": "./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json",
+    "upgrade-dependencies": "ncu -a && npm i"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keenondrums/axios-resource.git"
+  },
+  "author": "keenondrums",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keenondrums/axios-resource/issues"
+  },
+  "homepage": "https://github.com/keenondrums/axios-resource#readme",
+  "devDependencies": {
+    "npm-check-updates": "^2.14.0",
+    "tslint": "^5.9.1",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "axios": "^0.17.1"
+  }
+}

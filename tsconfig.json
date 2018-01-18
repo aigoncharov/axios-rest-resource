@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "strict": true,
+    "outDir": "./dist",
+    "sourceMap": true,
+    "target": "es2015",
+    "baseUrl": "./",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "./index.ts",
+    "./src/*",
+  ]
+}
