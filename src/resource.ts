@@ -1,10 +1,5 @@
-import { AxiosPromise, AxiosTransformer } from 'axios'
-import { createAxiosInstance as createAxiosInstanceDefault, ICreateAxiosInstance } from './axios'
-
-export interface IAPIRequestConfig {
-  params?: { [ index: string ]: string },
-  headers?: { [ index: string ]: string }
-}
+import { AxiosPromise, AxiosRequestConfig } from 'axios'
+import { AxiosResourceAdditionalProps, ICreateAxiosInstanceFromUrl } from './axios'
 
 export interface IActionMeta<Payload, Meta> {
   payload?: Payload,
@@ -12,9 +7,13 @@ export interface IActionMeta<Payload, Meta> {
   type: string
 }
 
-export type IAPIMethod = (action: IActionMeta<any, any>, requestConfig?: IAPIRequestConfig) => AxiosPromise
+export type IAPIMethod = (action: IActionMeta<any, any>, requestConfig?: Partial<AxiosRequestConfig>) => AxiosPromise
 
 export interface IResource {
+  [ index: string ]: IAPIMethod
+}
+
+export interface IResourceDefault {
   read: IAPIMethod,
   readOne: IAPIMethod,
   create: IAPIMethod,
@@ -27,18 +26,7 @@ export interface IAPIMethodSchema {
   url?: string
 }
 
-export interface IResourceSchema {
-  read: IAPIMethodSchema,
-  readOne: IAPIMethodSchema,
-  create: IAPIMethodSchema,
-  update: IAPIMethodSchema,
-  remove: IAPIMethodSchema
-}
-
-export type IExtendedResourceSchema<ExtendedResource> =
-  IResourceSchema & { [ K in keyof ExtendedResource ]: IAPIMethodSchema }
-
-export const defaultResourceSchema: IResourceSchema = {
+export const resourceSchemaDefault = {
   create: {
     method: 'post'
   },
@@ -59,43 +47,41 @@ export const defaultResourceSchema: IResourceSchema = {
   }
 }
 
-const defaultRequestConfig: IAPIRequestConfig = {
-  headers: {},
-  params: {}
-}
-const defaultAction: IActionMeta<any, any> = {
-  type: ''
+export interface IBuildParams {
+  url: string
 }
 
-export const buildResourceFromSchemaFactory =
-(createAxiosInstance: ICreateAxiosInstance = createAxiosInstanceDefault) =>
-<ExtendedResource extends { [ index: string ]: IAPIMethod } = {}>(
-  resourceUrl: string,
-  resourceSchema: IExtendedResourceSchema<ExtendedResource> =
-  {} as IExtendedResourceSchema<ExtendedResource>
-) => {
-  resourceSchema = Object.assign({}, defaultResourceSchema, resourceSchema)
-  const axiosInstance = createAxiosInstance(resourceUrl)
-  const resource = {} as IResource & ExtendedResource
-  for (const methodName of Object.keys(resourceSchema)) {
-    const schema = resourceSchema[methodName]
-    Object.assign(
-      resource,
-      {
-        [methodName]: ({ payload, meta } = defaultAction, requestConfig = defaultRequestConfig) =>
-          axiosInstance.request({
-            ...schema,
-            data: payload,
-            headers: requestConfig.headers,
-            params: requestConfig.params,
-            transformRequest: [ ...axiosInstance.transformers.map((fn) => (data: any, headers: any) =>
-              fn(data, headers, meta)),
-              ...axiosInstance.defaults.transformRequest as AxiosTransformer[]]
-          })
-      }
-    )
+export interface IBuildParamsExtended<
+ExtendedResource> extends IBuildParams {
+  schema: { [ Key in keyof ExtendedResource ]: IAPIMethodSchema }
+}
+
+export class ResourceBuilder {
+  private schema = resourceSchemaDefault
+  constructor (
+    private createAxiosInstance: ICreateAxiosInstanceFromUrl
+  ) {}
+
+  public build <ExtendedResource extends object,
+  PropertyTypeCheck extends IResource & ExtendedResource = IResource & ExtendedResource> ({
+    url,
+    schema
+  }: IBuildParamsExtended<ExtendedResource>) {
+    const axiosInstance = this.createAxiosInstance(url)
+    const resource = {} as ExtendedResource & IResource
+    for (const methodName of Object.keys(schema)) {
+      const methodSchema = (schema as any as IResource & ExtendedResource)[methodName]
+      resource[methodName] = (action, requestConfig = {}) => axiosInstance.request({
+        ...methodSchema,
+        ...requestConfig,
+        data: action.payload,
+        [AxiosResourceAdditionalProps]: action
+      } as AxiosRequestConfig)
+    }
+    return resource as ExtendedResource
   }
-  return resource
-}
 
-export const buildResourceFromSchema = buildResourceFromSchemaFactory()
+  public buildDefault ({ url }: IBuildParams) {
+    return this.build<IResourceDefault>({ url, schema: this.schema })
+  }
+}

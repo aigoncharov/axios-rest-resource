@@ -1,8 +1,13 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
-export type IAxiosInterceptor = (config: AxiosRequestConfig) => AxiosRequestConfig
+export const AxiosResourceAdditionalProps = Symbol('axiosResource')
+export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
+  [AxiosResourceAdditionalProps]: {
+    action: any
+  }
+}
 
-const requestFormatterInterceptor: IAxiosInterceptor = (config) => {
+export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosRequestConfig => {
   if (!config.params) {
     return config
   }
@@ -16,61 +21,27 @@ const requestFormatterInterceptor: IAxiosInterceptor = (config) => {
   return config
 }
 
-export const defaultInterceptors: IAxiosInterceptor[] = [ requestFormatterInterceptor ]
-
-export type IAxiosTrasformerExtended = (data: any, headers: any, meta: any) => any
-
-const insertAuthHeaderTransformer = (data: any, headers: any, meta: any) => {
-  if (meta && meta.authorization) {
-    headers.Authorization = meta.authorization
+export const interceptorAuthorizationToken = (config: AxiosRequestConfig) => {
+  const configExtended = config as IAxiosResourceRequestConfig
+  const action = configExtended[AxiosResourceAdditionalProps].action
+  if (action.meta && action.meta.authorization) {
+    configExtended.headers.Authorization = action.meta.authorization
   }
-  return data
+  return configExtended
 }
 
-export const defaultTransformers: IAxiosTrasformerExtended[] = [ insertAuthHeaderTransformer ]
-
-export interface ICreateAxiosInstanceFactoryOptions {
-  urlPrefix?: string,
-  headersMutator?: (headers: any) => any,
-  interceptors?: IAxiosInterceptor[],
-  transformers?: IAxiosTrasformerExtended[],
-  axiosInstanceCreator?: () => AxiosInstance
-}
-
-export interface IAxiosInstanceExtended extends AxiosInstance {
-  transformers: IAxiosTrasformerExtended[]
-}
-
-export const defaultFactoryOptions: ICreateAxiosInstanceFactoryOptions = {
-  axiosInstanceCreator: axios.create,
-  headersMutator: (headers) => headers.post['Content-Type'] = 'application/json',
-  interceptors: defaultInterceptors,
-  transformers: defaultTransformers,
-  urlPrefix: ''
-}
-
-export type ICreateAxiosInstance = (resourceUrl: string) => IAxiosInstanceExtended
-
-export const createAxiosInstanceFactory =
-(
-  { urlPrefix, headersMutator, transformers, interceptors, axiosInstanceCreator }: ICreateAxiosInstanceFactoryOptions =
-  defaultFactoryOptions
-): ICreateAxiosInstance =>
-(resourceUrl) => {
-  const axiosInstance = axiosInstanceCreator() as IAxiosInstanceExtended
-  axiosInstance.defaults.baseURL = `${urlPrefix}${resourceUrl}`
-
-  if (headersMutator) {
-    headersMutator(axiosInstance.defaults.headers)
-  }
-
-  axiosInstance.transformers = transformers || []
-
-  if (interceptors) {
-    interceptors.forEach((interceptor) => axiosInstance.interceptors.request.use(interceptor))
-  }
-
+export const createAxiosInstanceDefault = (config: AxiosRequestConfig): AxiosInstance => {
+  const axiosInstance = axios.create(config)
+  axios.interceptors.request.use(interceptorUrlFormatter)
+  axios.interceptors.request.use(interceptorAuthorizationToken)
   return axiosInstance
 }
 
-export const createAxiosInstance = createAxiosInstanceFactory()
+export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
+
+export const createAxiosInstanceFactory = (createAxiosInstance: () => AxiosInstance): ICreateAxiosInstanceFromUrl =>
+(resourceUrl) => {
+  const axiosInstance = createAxiosInstance()
+  axiosInstance.defaults.baseURL += resourceUrl
+  return axiosInstance
+}

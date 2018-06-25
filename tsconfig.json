@@ -2,6 +2,8 @@
   "compilerOptions": {
     "alwaysStrict": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
     "outDir": "./dist",
     "sourceMap": true,
     "target": "es2015",
