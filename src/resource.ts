@@ -1,5 +1,8 @@
 import { AxiosPromise, AxiosRequestConfig } from 'axios'
-import { AxiosResourceAdditionalProps, ICreateAxiosInstanceFromUrl } from './axios'
+import {
+  AxiosResourceAdditionalProps,
+  ICreateAxiosInstanceFromUrl
+} from './axios'
 
 export interface IActionMeta<Payload, Meta> {
   payload?: Payload,
@@ -50,27 +53,41 @@ export const resourceSchemaDefault = {
 export interface IBuildParams {
   url: string
 }
-
-export interface IBuildParamsExtended<
-ExtendedResource> extends IBuildParams {
-  schema: { [ Key in keyof ExtendedResource ]: IAPIMethodSchema }
+export interface IBuildParamsExtended<ResourceMethods extends string> extends IBuildParams {
+  schema: { [ Key in ResourceMethods ]: IAPIMethodSchema }
+}
+export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
+  [ Key in ResourceMethods ]: IAPIMethod
 }
 
 export class ResourceBuilder {
-  private schema = resourceSchemaDefault
+  protected _schema = resourceSchemaDefault
   constructor (
     private createAxiosInstance: ICreateAxiosInstanceFromUrl
   ) {}
 
-  public build <ExtendedResource extends object,
-  PropertyTypeCheck extends IResource & ExtendedResource = IResource & ExtendedResource> ({
-    url,
-    schema
-  }: IBuildParamsExtended<ExtendedResource>) {
+  public build (
+    buildParams: IBuildParams
+  ): IResourceDefault
+  public build <
+    ResourceMethods extends string
+  > (
+    buildParams: IBuildParamsExtended<ResourceMethods>
+  ): IBuildParamsExtendedRes<ResourceMethods>
+  public build <
+    ResourceMethods extends string
+  > (
+    buildParams: IBuildParams | IBuildParamsExtended<ResourceMethods>
+  ): IResourceDefault | IBuildParamsExtendedRes<ResourceMethods> {
+    const { url } = buildParams
+    let schema: { [ index: string ]: IAPIMethodSchema } = this._schema
+    if (this._isBuildRapamsExtended(buildParams)) {
+      schema = buildParams.schema
+    }
     const axiosInstance = this.createAxiosInstance(url)
-    const resource = {} as ExtendedResource & IResource
+    const resource = {} as IBuildParamsExtendedRes<ResourceMethods> & IResource
     for (const methodName of Object.keys(schema)) {
-      const methodSchema = (schema as any as IResource & ExtendedResource)[methodName]
+      const methodSchema = schema[methodName]
       resource[methodName] = (action, requestConfig = {}) => axiosInstance.request({
         ...methodSchema,
         ...requestConfig,
@@ -78,10 +95,12 @@ export class ResourceBuilder {
         [AxiosResourceAdditionalProps]: action
       } as AxiosRequestConfig)
     }
-    return resource as ExtendedResource
+    return resource as IBuildParamsExtendedRes<ResourceMethods>
   }
 
-  public buildDefault ({ url }: IBuildParams) {
-    return this.build<IResourceDefault>({ url, schema: this.schema })
+  protected _isBuildRapamsExtended<ResourceMethods extends string> (
+    buildParams: IBuildParams | IBuildParamsExtended<ResourceMethods>
+  ): buildParams is IBuildParamsExtended<ResourceMethods> {
+    return !!(buildParams as IBuildParamsExtended<ResourceMethods>).schema
   }
 }

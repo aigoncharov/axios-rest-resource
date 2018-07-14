@@ -30,7 +30,7 @@ export const interceptorAuthorizationToken = (config: AxiosRequestConfig) => {
   return configExtended
 }
 
-export const createAxiosInstanceDefault = (config: AxiosRequestConfig): AxiosInstance => {
+export const createAxiosInstanceFactory = (config: AxiosRequestConfig) => () => {
   const axiosInstance = axios.create(config)
   axios.interceptors.request.use(interceptorUrlFormatter)
   axios.interceptors.request.use(interceptorAuthorizationToken)
@@ -39,7 +39,7 @@ export const createAxiosInstanceDefault = (config: AxiosRequestConfig): AxiosIns
 
 export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
 
-export const createAxiosInstanceFactory = (createAxiosInstance: () => AxiosInstance): ICreateAxiosInstanceFromUrl =>
+export const createAxiosResourceFactory = (createAxiosInstance: () => AxiosInstance): ICreateAxiosInstanceFromUrl =>
 (resourceUrl) => {
   const axiosInstance = createAxiosInstance()
   axiosInstance.defaults.baseURL += resourceUrl
