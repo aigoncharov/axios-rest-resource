@@ -4,9 +4,9 @@ import * as moxios from 'moxios'
 
 import {
   AxiosResourceAdditionalProps,
-  createAxiosInstanceFactory,
   createAxiosResourceFactory,
   IAxiosResourceRequestConfig,
+  ICreateAxiosInstanceFactoryParams,
   interceptorAuthorizationToken,
   interceptorUrlFormatter
 } from './axios'
@@ -21,37 +21,68 @@ describe('axios', () => {
       expect(target).to.have.property(key)
     }
   }
-  describe('createAxiosInstanceFactory', () => {
-    const createInstanceAndValidate = (config: AxiosRequestConfig & { baseURL: string }) => {
-      const createAxiosInstance = createAxiosInstanceFactory(config)
-      expect(typeof createAxiosInstance).to.be.equal('function')
-      const axiosInstance = createAxiosInstance()
-      expect(typeof axiosInstance).to.be.equal('function')
+
+  describe('createAxiosResourceFactory', () => {
+    const createAxiosResourceAndValidate = (
+      axiosResourceFactoryParams: ICreateAxiosInstanceFactoryParams,
+      resourceURL: string
+    ) => {
+      const createAxiosResource = createAxiosResourceFactory(axiosResourceFactoryParams)
+      expect(typeof createAxiosResource).to.be.equal('function')
+      const axiosInstance = createAxiosResource(resourceURL)
+      expect(axiosInstance.defaults.baseURL).to.be.equal(`${axiosResourceFactoryParams.baseURL}${resourceURL}`)
       checkIsAxiosInstance(axiosInstance)
-      expect(axiosInstance.defaults.baseURL).to.be.equal(config.baseURL)
       return axiosInstance
     }
-    it('success: creates axios instance factory', () => {
+    it('success: creates axios resource', () => {
       const baseURL = 'http://localhost:3000'
-      createInstanceAndValidate({ baseURL })
+      const resourceURL = '/test'
+      createAxiosResourceAndValidate({ baseURL }, resourceURL)
     })
 
-    it('success: creates axios instance factory and sets defaults', () => {
+    it('success: creates axios resource and sets defaults', () => {
       const baseURL = 'http://localhost:3000'
+      const resourceURL = '/test'
       const headers = {
         common: {
           Authorization: 'test'
         }
       }
-      const axiosInstance = createInstanceAndValidate({
-        baseURL,
-        headers
-      })
+      const axiosInstance = createAxiosResourceAndValidate({ baseURL, headers }, resourceURL)
       expect(axiosInstance.defaults.headers.common).to.have.property('Authorization', headers.common.Authorization)
     })
 
     it('success: applies default interceptors', async () => {
+      const baseURL = 'http://localhost:3000'
+      const resourceURL = '/resource'
+      const requestConfig: IAxiosResourceRequestConfig = {
+        params: {
+          id: 'testId'
+        },
+        url: '/{id}/test',
+        [AxiosResourceAdditionalProps]: {
+          action: {
+            type: 'ACTION'
+          }
+        }
+      }
+      const axiosInstance = createAxiosResourceAndValidate({ baseURL }, resourceURL)
+      const manager = axiosInstance.interceptors.request as any
+      expect(manager.handlers.length).to.be.equal(1)
+      expect(manager.handlers[0].fulfilled).to.be.equal(interceptorUrlFormatter)
+      const axiosPromise = axiosInstance.request(requestConfig)
+      await new Promise((resolve) => moxios.wait(resolve))
+      expect(moxios.requests.count()).to.be.equal(1)
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.be.equal(`${baseURL}${resourceURL}/testId/test`)
+      await request.respondWith({ status: 200 })
+      await axiosPromise
+    })
+
+    it('success: applies additional interceptors', async () => {
       const authorization = 'testAuthorizationHeader'
+      const baseURL = 'http://localhost:3000'
+      const resourceURL = '/test'
       const requestConfig: IAxiosResourceRequestConfig = {
         params: {
           id: 'testId'
@@ -66,8 +97,10 @@ describe('axios', () => {
           }
         }
       }
-      const baseURL = 'http://localhost:3000'
-      const axiosInstance = createInstanceAndValidate({ baseURL })
+      const axiosInstance = createAxiosResourceAndValidate(
+        { baseURL, interceptors: [ interceptorAuthorizationToken ] },
+        resourceURL
+      )
       const manager = axiosInstance.interceptors.request as any
       expect(manager.handlers.length).to.be.equal(2)
       expect(manager.handlers[0].fulfilled).to.be.equal(interceptorUrlFormatter)
@@ -76,22 +109,10 @@ describe('axios', () => {
       await new Promise((resolve) => moxios.wait(resolve))
       expect(moxios.requests.count()).to.be.equal(1)
       const request = moxios.requests.mostRecent()
-      expect(request.url).to.be.equal(`${baseURL}/testId/test`)
+      expect(request.url).to.be.equal(`${baseURL}${resourceURL}/testId/test`)
       expect(request.headers).to.have.property('Authorization', authorization)
       await request.respondWith({ status: 200 })
       await axiosPromise
-    })
-  })
-
-  describe('createAxiosResourceFactory', () => {
-    it('success: creates axios resource factory', () => {
-      const baseURL = 'http://localhost:3000'
-      const resourceURL = '/test'
-      const createAxiosInstance = createAxiosInstanceFactory({ baseURL })
-      const createAxiosResource = createAxiosResourceFactory(createAxiosInstance)
-      const axiosInstance = createAxiosResource(resourceURL)
-      expect(axiosInstance.defaults.baseURL).to.be.equal(`${baseURL}${resourceURL}`)
-      checkIsAxiosInstance(axiosInstance)
     })
   })
 

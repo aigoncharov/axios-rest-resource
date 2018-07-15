@@ -5,7 +5,6 @@ import { createSandbox, SinonSandbox } from 'sinon'
 
 import {
   AxiosResourceAdditionalProps,
-  createAxiosInstanceFactory,
   createAxiosResourceFactory,
   IAxiosResourceRequestConfig
 } from './axios'
@@ -39,7 +38,7 @@ describe('resource', () => {
       'url'
     ]
     const resourceBuilderValidate = async (
-      axiosConfig: AxiosRequestConfig & { baseURL: string },
+      resourceBuilder: ResourceBuilder,
       resourceBuilderParams: IBuildParams | IBuildParamsExtended<string>,
       resourceMethodParams: [ IActionMeta<any, any>, AxiosRequestConfig? ]
     ) => {
@@ -47,9 +46,6 @@ describe('resource', () => {
         responseText: 'OK',
         status: 200
       })
-      const createAxiosInstance = createAxiosInstanceFactory(axiosConfig)
-      const createAxiosResource = createAxiosResourceFactory(createAxiosInstance)
-      const resourceBuilder = new ResourceBuilder(createAxiosResource)
       const spyCreateAxiosResource = sinon.spy((resourceBuilder as any), '_createAxiosResource')
       const resource = resourceBuilder.build(resourceBuilderParams)
       expect(spyCreateAxiosResource.callCount).to.be.equal(1)
@@ -99,8 +95,26 @@ describe('resource', () => {
           payload: 'test',
           type: 'ACTION'
         }
+        const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
-          { baseURL },
+          resourceBuilder,
+          { url: resourceURL },
+          [ action ]
+        )
+        expect(schemaRes).to.be.equal(resourceSchemaDefault)
+      })
+
+      it('success: accepts ICreateAxiosInstanceFromUrl', async () => {
+        const baseURL = 'http://localhost:3000'
+        const resourceURL = '/resource'
+        const action = {
+          payload: 'test',
+          type: 'ACTION'
+        }
+        const createAxiosResource = createAxiosResourceFactory({ baseURL })
+        const resourceBuilder = new ResourceBuilder(createAxiosResource)
+        const schemaRes = await resourceBuilderValidate(
+          resourceBuilder,
           { url: resourceURL },
           [ action ]
         )
@@ -119,8 +133,9 @@ describe('resource', () => {
             method: 'PUT'
           }
         }
+        const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
-          { baseURL },
+          resourceBuilder,
           { url: resourceURL, schema },
           [ action ]
         )
@@ -144,8 +159,9 @@ describe('resource', () => {
             test: 'test'
           }
         }
+        const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
-          { baseURL },
+          resourceBuilder,
           { url: resourceURL, schema },
           [ action, requestParams ]
         )
@@ -173,8 +189,9 @@ describe('resource', () => {
           url: 'should not be overridden',
           [AxiosResourceAdditionalProps]: 'should not be overridden' as any
         }
+        const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
-          { baseURL },
+          resourceBuilder,
           { url: resourceURL, schema },
           [ action, requestParams ]
         )

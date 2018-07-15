@@ -2,7 +2,9 @@ import { AxiosPromise, AxiosRequestConfig } from 'axios'
 
 import {
   AxiosResourceAdditionalProps,
+  createAxiosResourceFactory,
   IAxiosResourceRequestConfigExtraData,
+  ICreateAxiosInstanceFactoryParams,
   ICreateAxiosInstanceFromUrl
 } from './axios'
 
@@ -64,9 +66,16 @@ export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
 
 export class ResourceBuilder {
   protected readonly _schemaDefault = resourceSchemaDefault
+  protected readonly _createAxiosResource: ICreateAxiosInstanceFromUrl
   constructor (
-    protected _createAxiosResource: ICreateAxiosInstanceFromUrl
-  ) {}
+    createParams: ICreateAxiosInstanceFromUrl | ICreateAxiosInstanceFactoryParams
+  ) {
+    if (this._isAxiosResourceFactoryParams(createParams)) {
+      this._createAxiosResource = createAxiosResourceFactory(createParams)
+      return
+    }
+    this._createAxiosResource = createParams
+  }
 
   public build (
     buildParams: IBuildParams
@@ -104,5 +113,11 @@ export class ResourceBuilder {
     buildParams: IBuildParams | IBuildParamsExtended<ResourceMethods>
   ): buildParams is IBuildParamsExtended<ResourceMethods> {
     return !!(buildParams as IBuildParamsExtended<ResourceMethods>).schema
+  }
+
+  protected _isAxiosResourceFactoryParams (
+    createParams: ICreateAxiosInstanceFromUrl | ICreateAxiosInstanceFactoryParams
+  ): createParams is ICreateAxiosInstanceFactoryParams {
+    return typeof createParams === 'object'
   }
 }
