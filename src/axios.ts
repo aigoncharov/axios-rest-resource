@@ -1,9 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
-export const AxiosResourceAdditionalProps = Symbol('axiosResource')
+export const AxiosResourceAdditionalProps = Symbol('axios-resource/AxiosResourceAdditionalProps')
 export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
   [AxiosResourceAdditionalProps]: {
-    action: any
+    action: unknown
   }
 }
 
@@ -21,19 +21,37 @@ export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosReques
   return config
 }
 
+export interface IActionMetaAuthorization {
+  meta: {
+    authorization: string
+  }
+}
+const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAuthorization => {
+  const actionTyped = action as IActionMetaAuthorization
+  return !!(
+    actionTyped &&
+    typeof actionTyped === 'object' &&
+    actionTyped.meta &&
+    actionTyped.meta.authorization &&
+    typeof actionTyped.meta.authorization === 'string'
+  )
+}
 export const interceptorAuthorizationToken = (config: AxiosRequestConfig) => {
   const configExtended = config as IAxiosResourceRequestConfig
   const action = configExtended[AxiosResourceAdditionalProps].action
-  if (action.meta && action.meta.authorization) {
+  if (actionHasMetaAuthorization(action)) {
+    if (!config.headers) {
+      config.headers = {}
+    }
     configExtended.headers.Authorization = action.meta.authorization
   }
   return configExtended
 }
 
-export const createAxiosInstanceFactory = (config: AxiosRequestConfig) => () => {
+export const createAxiosInstanceFactory = (config: AxiosRequestConfig & { baseURL: string }) => () => {
   const axiosInstance = axios.create(config)
-  axios.interceptors.request.use(interceptorUrlFormatter)
-  axios.interceptors.request.use(interceptorAuthorizationToken)
+  axiosInstance.interceptors.request.use(interceptorUrlFormatter)
+  axiosInstance.interceptors.request.use(interceptorAuthorizationToken)
   return axiosInstance
 }
 

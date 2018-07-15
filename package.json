@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --recursive --use_strict --require ts-node/register ./test/**/*.test.ts",
+    "test": "./node_modules/.bin/mocha --recursive --use_strict --require ts-node/register './**/*.test.ts'",
     "compile": "./node_modules/.bin/tsc -p ./tsconfig.json",
     "lint": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit && ./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json"
   },
