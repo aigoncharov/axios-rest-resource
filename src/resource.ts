@@ -1,6 +1,8 @@
 import { AxiosPromise, AxiosRequestConfig } from 'axios'
+
 import {
   AxiosResourceAdditionalProps,
+  IAxiosResourceRequestConfigExtraData,
   ICreateAxiosInstanceFromUrl
 } from './axios'
 
@@ -89,10 +91,10 @@ export class ResourceBuilder {
     for (const methodName of Object.keys(schema)) {
       const methodSchema = schema[methodName]
       resource[methodName] = (action, requestConfig = {}) => axiosInstance.request({
-        ...methodSchema,
         ...requestConfig,
+        ...methodSchema,
         data: action.payload,
-        [AxiosResourceAdditionalProps]: action
+        [AxiosResourceAdditionalProps]: { action } as IAxiosResourceRequestConfigExtraData
       } as AxiosRequestConfig)
     }
     return resource as IBuildParamsExtendedRes<ResourceMethods>

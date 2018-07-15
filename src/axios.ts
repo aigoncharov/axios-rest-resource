@@ -2,10 +2,11 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 // TODO: Make me a Symbol
 export const AxiosResourceAdditionalProps = 'axios-resource/AxiosResourceAdditionalProps'
+export interface IAxiosResourceRequestConfigExtraData {
+  action: unknown
+}
 export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
-  [AxiosResourceAdditionalProps]: {
-    action: unknown
-  }
+  [AxiosResourceAdditionalProps]: IAxiosResourceRequestConfigExtraData
 }
 
 export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosRequestConfig => {
@@ -29,13 +30,7 @@ export interface IActionMetaAuthorization {
 }
 const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAuthorization => {
   const actionTyped = action as IActionMetaAuthorization
-  return !!(
-    actionTyped &&
-    typeof actionTyped === 'object' &&
-    actionTyped.meta &&
-    actionTyped.meta.authorization &&
-    typeof actionTyped.meta.authorization === 'string'
-  )
+  return !!(actionTyped.meta && actionTyped.meta.authorization)
 }
 export const interceptorAuthorizationToken = (config: AxiosRequestConfig) => {
   const configExtended = config as IAxiosResourceRequestConfig

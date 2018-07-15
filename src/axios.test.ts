@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { expect } from 'chai'
+import * as moxios from 'moxios'
 
 import {
   AxiosResourceAdditionalProps,
@@ -11,6 +12,9 @@ import {
 } from './axios'
 
 describe('axios', () => {
+  beforeEach(() => moxios.install())
+  afterEach(() => moxios.uninstall())
+
   const checkIsAxiosInstance = (target: object) => {
     const axiosInstanceRef = axios.create()
     for (const key of Object.keys(axiosInstanceRef)) {
@@ -46,13 +50,36 @@ describe('axios', () => {
       expect(axiosInstance.defaults.headers.common).to.have.property('Authorization', headers.common.Authorization)
     })
 
-    it('success: applies default interceptors', () => {
+    it('success: applies default interceptors', async () => {
+      const authorization = 'testAuthorizationHeader'
+      const requestConfig: IAxiosResourceRequestConfig = {
+        params: {
+          id: 'testId'
+        },
+        url: '/{id}/test',
+        [AxiosResourceAdditionalProps]: {
+          action: {
+            meta: {
+              authorization
+            },
+            type: 'ACTION'
+          }
+        }
+      }
       const baseURL = 'http://localhost:3000'
       const axiosInstance = createInstanceAndValidate({ baseURL })
       const manager = axiosInstance.interceptors.request as any
       expect(manager.handlers.length).to.be.equal(2)
       expect(manager.handlers[0].fulfilled).to.be.equal(interceptorUrlFormatter)
       expect(manager.handlers[1].fulfilled).to.be.equal(interceptorAuthorizationToken)
+      const axiosPromise = axiosInstance.request(requestConfig)
+      await new Promise((resolve) => moxios.wait(resolve))
+      expect(moxios.requests.count()).to.be.equal(1)
+      const request = moxios.requests.mostRecent()
+      expect(request.url).to.be.equal(`${baseURL}/testId/test`)
+      expect(request.headers).to.have.property('Authorization', authorization)
+      await request.respondWith({ status: 200 })
+      await axiosPromise
     })
   })
 
