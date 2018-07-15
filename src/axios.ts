@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
-export const AxiosResourceAdditionalProps = Symbol('axios-resource/AxiosResourceAdditionalProps')
+// TODO: Make me a Symbol
+export const AxiosResourceAdditionalProps = 'axios-resource/AxiosResourceAdditionalProps'
 export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
   [AxiosResourceAdditionalProps]: {
     action: unknown

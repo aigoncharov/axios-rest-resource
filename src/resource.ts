@@ -61,9 +61,9 @@ export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
 }
 
 export class ResourceBuilder {
-  protected _schema = resourceSchemaDefault
+  protected readonly _schemaDefault = resourceSchemaDefault
   constructor (
-    private createAxiosInstance: ICreateAxiosInstanceFromUrl
+    protected _createAxiosResource: ICreateAxiosInstanceFromUrl
   ) {}
 
   public build (
@@ -80,11 +80,11 @@ export class ResourceBuilder {
     buildParams: IBuildParams | IBuildParamsExtended<ResourceMethods>
   ): IResourceDefault | IBuildParamsExtendedRes<ResourceMethods> {
     const { url } = buildParams
-    let schema: { [ index: string ]: IAPIMethodSchema } = this._schema
+    let schema: { [ index: string ]: IAPIMethodSchema } = this._schemaDefault
     if (this._isBuildRapamsExtended(buildParams)) {
       schema = buildParams.schema
     }
-    const axiosInstance = this.createAxiosInstance(url)
+    const axiosInstance = this._createAxiosResource(url)
     const resource = {} as IBuildParamsExtendedRes<ResourceMethods> & IResource
     for (const methodName of Object.keys(schema)) {
       const methodSchema = schema[methodName]
