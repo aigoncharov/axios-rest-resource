@@ -33,6 +33,10 @@ export interface IAPIMethodSchema {
   url?: string
 }
 
+/**
+ * @description
+ * Default resource schema used by ResourceBuilder.prototype.build
+ */
 export const resourceSchemaDefault = {
   create: {
     method: 'post'
@@ -64,6 +68,24 @@ export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
   [ Key in ResourceMethods ]: IAPIMethod
 }
 
+/**
+ * @description
+ * Axios resource builder itself.
+ *
+ * @param createParams
+ * Either axios request config with an optional array of request interceptors or
+ * a function that accepts a resource url and returns an axios instance.
+ * If you pass axios request config with an optional array of request interceptors
+ * it calls createAxiosResourceFactory under the hood. @see createAxiosResourceFactory
+ *
+ * @example
+ * // utils/axios-resource.js
+ * import { ResourceBuilder } from 'axios-resource'
+ *
+ * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
+ *
+ * // use it later to create pre-configured axios instances for every resource
+ */
 export class ResourceBuilder {
   protected readonly _schemaDefault = resourceSchemaDefault
   protected readonly _createAxiosResource: ICreateAxiosInstanceFromUrl
@@ -77,6 +99,90 @@ export class ResourceBuilder {
     this._createAxiosResource = createParams
   }
 
+  /**
+   * @description
+   * Creates an axios instance using a function passed (created) into ResourceBuilder constructor and
+   * a url passed into this method.
+   * Returns an object which has the same properties as a schema you provided (or default schema).
+   * Each one of this properties is a function which accepts an action and an optional request config,
+   * makes a request using the axios instance created earlier and returns a Promise of this request.
+   * action.payload is used as 'data' of the request. Method and optional url from the schema are used
+   * as 'method' and 'url' accordingly. You can pass any additional properties with the optional request config.
+   * Be aware that the optional request config is applied first.
+   * That means you can not override method and url from schema there. You can not override 'data' as well.
+   * An additional property [AxiosResourceAdditionalProps] is passed to the request config.
+   * It's an object with action property inside of it. The action that triggered the request is saved there.
+   * you can use it in your interceptors later. @see interceptorAuthorizationToken
+   *
+   * @param buildParams
+   * An object wih resource url and optional resource schema.
+   * By default resourceSchemaDefault is used as a schema for the new resource.
+   * @see resourceSchemaDefault
+   *
+   * @example
+   * // utils/axios-resource.js
+   * import { ResourceBuilder } from 'axios-resource'
+   *
+   * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
+   *
+   * // api/entity1.js
+   * import { resourceBuilder } from 'utils/axios-resource'
+   *
+   * export const entity1Resource = resourceBuilder.build({ url: '/entity1' })
+   * // uses default schema
+   * // exports an object
+   * // {
+   * //   create: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
+   * //   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1,
+   * //   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1/{id},
+   * //   remove: (action, requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity1/{id},
+   * //   update: (action, requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity1/{id}
+   * // }
+   *
+   * // sagas/entity1.js
+   * import { entity1Resource } from 'api/entity1'
+   *
+   * // action here is { type: 'ENTITY1_READ_INIT' }
+   * export function* entity1ReadSaga (action) {
+   *   const res = yield call([entity1Resource, entity1Resource.read], action)
+   *   // sends GET http://localhost:3000/entity1
+   *   yield put({ type: 'ENTITY1_READ_SUCCESS', payload: res })
+   * }
+   * // action here is { type: 'ENTITY1_READ_ONE_INIT', meta: { id: '123'} }
+   * export function* entity1ReadOneSaga (action) {
+   *   const res = yield call([entity1Resource, entity1Resource.readOne], action, { params: { id: action.meta.id } })
+   *   // sends GET http://localhost:3000/entity1/123
+   *   yield put({ type: 'ENTITY1_READ_ONE_SUCCESS', payload: res })
+   * }
+   *
+   * // api/entity2.js
+   * import { resourceBuilder } from 'utils/axios-resource'
+   *
+   * export const entity1Resource = resourceBuilder.build({
+   *   url: '/entity1',
+   *   schema: {
+   *     doSomething1: {
+   *       url: '/do-something',
+   *       method: 'POST'
+   *     }
+   *   }
+   * })
+   * // uses cusom schema
+   * // exports an object
+   * // {
+   * //   doSomething1: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1/do-something
+   * // }
+   *
+   * // sagas/entity2.js
+   * import { entity2Resource } from 'api/entity2'
+   *
+   * // action here is { type: 'ENTITY2_DO_SOMETHING1_INIT' }
+   * export function* entity2DoSomething1Saga (action) {
+   *   const res = yield call([entity1Resource, entity2Resource.doSomething1], action)
+   *   // sends POST http://localhost:3000/entity2do-something
+   *   yield put({ type: 'ENTITY2_DO_SOMETHING1_SUCCESS', payload: res })
+   * }
+   */
   public build (
     buildParams: IBuildParams
   ): IResourceDefault

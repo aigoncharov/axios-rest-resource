@@ -12,7 +12,8 @@ export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
 /**
  * @description
  * Axios interceptor. Finds tokens inside of {} in config.url, matches them by keys of config.params,
- * replaces them with matched values, removes matched keys from config.params
+ * replaces them with matched values, removes matched keys from config.params.
+ * Applied by default to an axios instance created by createAxiosResourceFactory
  *
  * @example
  * const axiosInstance = axios.create()
@@ -39,7 +40,7 @@ export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
  * //   params: {}
  * // }
  */
-const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosRequestConfig => {
+export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosRequestConfig => {
   if (!config.params) {
     return config
   }
@@ -113,6 +114,9 @@ export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
  * Factory that accepts default axios request config and an optional array of request interceptors,
  * returns a function that accepts a resource url and returns a configured axios instance.
  * Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter
+ * If you pass no interceptors only default interceptorUrlFormatteris applied.
+ * Interceptors you provided are applied with respect to the order.
+ * Default interceptorUrlFormatter is always applied first.
  *
  * @example
  * const createAxiosResource = createAxiosResourceFactory({ baseUrl: 'http://localhost:3000' })
