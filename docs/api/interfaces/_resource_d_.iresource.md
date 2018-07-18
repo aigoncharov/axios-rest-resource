@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > ["resource](../modules/_resource_d_.md) > [IResource](../interfaces/_resource_d_.iresource.md)
+[axios-resource](../README.md) > ["resource"](../modules/_resource_d_.md) > [IResource](../interfaces/_resource_d_.iresource.md)
 
 # Interface: IResource
 

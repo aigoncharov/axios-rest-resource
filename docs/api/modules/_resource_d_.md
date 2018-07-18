@@ -1,6 +1,6 @@
-[axios-resource](../README.md) > ["resource](../modules/_resource_d_.md)
+[axios-resource](../README.md) > ["resource"](../modules/_resource_d_.md)
 
-# External module: "resource
+# External module: "resource"
 
 ## Index
 

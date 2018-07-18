@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > ["axios](../modules/_axios_d_.md) > [IAxiosResourceRequestConfigExtraData](../interfaces/_axios_d_.iaxiosresourcerequestconfigextradata.md)
+[axios-resource](../README.md) > ["axios"](../modules/_axios_d_.md) > [IAxiosResourceRequestConfigExtraData](../interfaces/_axios_d_.iaxiosresourcerequestconfigextradata.md)
 
 # Interface: IAxiosResourceRequestConfigExtraData
 

@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > ["resource](../modules/_resource_d_.md) > [ResourceBuilder](../classes/_resource_d_.resourcebuilder.md)
+[axios-resource](../README.md) > ["resource"](../modules/_resource_d_.md) > [ResourceBuilder](../classes/_resource_d_.resourcebuilder.md)
 
 # Class: ResourceBuilder
 
