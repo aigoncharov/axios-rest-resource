@@ -10,8 +10,8 @@
 
 ### Properties
 
-* [method](_resource_d_.iapimethodschema.md#method)
-* [url](_resource_d_.iapimethodschema.md#url)
+- [method](_resource_d_.iapimethodschema.md#method)
+- [url](_resource_d_.iapimethodschema.md#url)
 
 ---
 
@@ -19,17 +19,17 @@
 
 <a id="method"></a>
 
-###  method
+### method
 
-**● method**: *`string`*
+**● method**: _`string`_
 
-___
+---
+
 <a id="url"></a>
 
 ### `<Optional>` url
 
-**● url**: * `undefined` &#124; `string`
-*
+**● url**: _ `undefined` &#124; `string`
+_
 
-___
-
+---

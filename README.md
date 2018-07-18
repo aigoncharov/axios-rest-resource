@@ -1,4 +1,5 @@
 # axios-resource
 
 ## API
-[API reference](docs/api/README.md) 
+
+[API reference](docs/api/README.md)

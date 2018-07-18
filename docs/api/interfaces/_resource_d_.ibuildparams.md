@@ -6,13 +6,13 @@
 
 **IBuildParams**
 
-↳  [IBuildParamsExtended](_resource_d_.ibuildparamsextended.md)
+↳ [IBuildParamsExtended](_resource_d_.ibuildparamsextended.md)
 
 ## Index
 
 ### Properties
 
-* [url](_resource_d_.ibuildparams.md#url)
+- [url](_resource_d_.ibuildparams.md#url)
 
 ---
 
@@ -20,9 +20,8 @@
 
 <a id="url"></a>
 
-###  url
+### url
 
-**● url**: *`string`*
+**● url**: _`string`_
 
-___
-
+---

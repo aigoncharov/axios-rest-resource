@@ -10,11 +10,11 @@
 
 ### Properties
 
-* [create](_resource_d_.iresourcedefault.md#create)
-* [read](_resource_d_.iresourcedefault.md#read)
-* [readOne](_resource_d_.iresourcedefault.md#readone)
-* [remove](_resource_d_.iresourcedefault.md#remove)
-* [update](_resource_d_.iresourcedefault.md#update)
+- [create](_resource_d_.iresourcedefault.md#create)
+- [read](_resource_d_.iresourcedefault.md#read)
+- [readOne](_resource_d_.iresourcedefault.md#readone)
+- [remove](_resource_d_.iresourcedefault.md#remove)
+- [update](_resource_d_.iresourcedefault.md#update)
 
 ---
 
@@ -22,37 +22,40 @@
 
 <a id="create"></a>
 
-###  create
+### create
 
-**● create**: *[IAPIMethod](../modules/_resource_d_.md#iapimethod)*
+**● create**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
 
-___
+---
+
 <a id="read"></a>
 
-###  read
+### read
 
-**● read**: *[IAPIMethod](../modules/_resource_d_.md#iapimethod)*
+**● read**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
 
-___
+---
+
 <a id="readone"></a>
 
-###  readOne
+### readOne
 
-**● readOne**: *[IAPIMethod](../modules/_resource_d_.md#iapimethod)*
+**● readOne**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
 
-___
+---
+
 <a id="remove"></a>
 
-###  remove
+### remove
 
-**● remove**: *[IAPIMethod](../modules/_resource_d_.md#iapimethod)*
+**● remove**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
 
-___
+---
+
 <a id="update"></a>
 
-###  update
+### update
 
-**● update**: *[IAPIMethod](../modules/_resource_d_.md#iapimethod)*
+**● update**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
 
-___
-
+---

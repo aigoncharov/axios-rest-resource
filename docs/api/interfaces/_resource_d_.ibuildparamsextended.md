@@ -3,10 +3,12 @@
 # Interface: IBuildParamsExtended
 
 ## Type parameters
-#### ResourceMethods :  `string`
+
+#### ResourceMethods : `string`
+
 ## Hierarchy
 
- [IBuildParams](_resource_d_.ibuildparams.md)
+[IBuildParams](_resource_d_.ibuildparams.md)
 
 **↳ IBuildParamsExtended**
 
@@ -14,8 +16,8 @@
 
 ### Properties
 
-* [schema](_resource_d_.ibuildparamsextended.md#schema)
-* [url](_resource_d_.ibuildparamsextended.md#url)
+- [schema](_resource_d_.ibuildparamsextended.md#schema)
+- [url](_resource_d_.ibuildparamsextended.md#url)
 
 ---
 
@@ -23,18 +25,18 @@
 
 <a id="schema"></a>
 
-###  schema
+### schema
 
-**● schema**: *`object`*
+**● schema**: _`object`_
 
 #### Type declaration
 
-___
+---
+
 <a id="url"></a>
 
-###  url
+### url
 
-**● url**: *`string`*
+**● url**: _`string`_
 
-___
-
+---

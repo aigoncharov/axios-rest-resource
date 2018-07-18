@@ -9,7 +9,7 @@
 ## Indexable
 
 \[index: `string`\]:&nbsp;[IAPIMethod](../modules/_resource_d_.md#iapimethod)
+
 ## Index
 
 ---
-

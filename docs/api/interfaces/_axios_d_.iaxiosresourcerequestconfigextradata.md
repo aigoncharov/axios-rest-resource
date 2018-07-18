@@ -10,7 +10,7 @@
 
 ### Properties
 
-* [action](_axios_d_.iaxiosresourcerequestconfigextradata.md#action)
+- [action](_axios_d_.iaxiosresourcerequestconfigextradata.md#action)
 
 ---
 
@@ -18,9 +18,8 @@
 
 <a id="action"></a>
 
-###  action
+### action
 
-**● action**: *`unknown`*
+**● action**: _`unknown`_
 
-___
-
+---

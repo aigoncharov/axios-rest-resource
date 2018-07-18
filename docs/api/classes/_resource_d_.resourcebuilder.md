@@ -2,16 +2,19 @@
 
 # Class: ResourceBuilder
 
-*__description__*: Axios resource builder itself.
+_**description**_: Axios resource builder itself.
 
-*__param__*: Either axios request config with an optional array of request interceptors or a function that accepts a resource url and returns an axios instance. If you pass axios request config with an optional array of request interceptors it calls createAxiosResourceFactory under the hood. @see createAxiosResourceFactory
+_**param**_: Either axios request config with an optional array of request interceptors or a function that accepts a resource url and returns an axios instance. If you pass axios request config with an optional array of request interceptors it calls createAxiosResourceFactory under the hood. @see createAxiosResourceFactory
 
-*__example__*: 
+_**example**_:
+
 ```js
 // utils/axios-resource.js
-import { ResourceBuilder } from 'axios-resource'
+import { ResourceBuilder } from "axios-resource";
 
-export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
+export const resourceBuilder = new ResourceBuilder({
+  baseUrl: "http://localhost:3000"
+});
 
 // use it later to create pre-configured axios instances for every resource
 ```
@@ -24,11 +27,11 @@ export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:
 
 ### Constructors
 
-* [constructor](_resource_d_.resourcebuilder.md#constructor)
+- [constructor](_resource_d_.resourcebuilder.md#constructor)
 
 ### Methods
 
-* [build](_resource_d_.resourcebuilder.md#build)
+- [build](_resource_d_.resourcebuilder.md#build)
 
 ---
 
@@ -36,35 +39,36 @@ export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:
 
 <a id="constructor"></a>
 
-###  constructor
+### constructor
 
-⊕ **new ResourceBuilder**(createParams: * [ICreateAxiosInstanceFromUrl](../modules/_axios_d_.md#icreateaxiosinstancefromurl) &#124; [ICreateAxiosInstanceFactoryParams](../interfaces/_axios_d_.icreateaxiosinstancefactoryparams.md)*): [ResourceBuilder](_resource_d_.resourcebuilder.md)
+⊕ **new ResourceBuilder**(createParams: _ [ICreateAxiosInstanceFromUrl](../modules/_axios_d_.md#icreateaxiosinstancefromurl) &#124; [ICreateAxiosInstanceFactoryParams](../interfaces/_axios_d_.icreateaxiosinstancefactoryparams.md)_): [ResourceBuilder](_resource_d_.resourcebuilder.md)
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| createParams |  [ICreateAxiosInstanceFromUrl](../modules/_axios_d_.md#icreateaxiosinstancefromurl) &#124; [ICreateAxiosInstanceFactoryParams](../interfaces/_axios_d_.icreateaxiosinstancefactoryparams.md)|
+| Param        | Type                                                                                                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| createParams | [ICreateAxiosInstanceFromUrl](../modules/_axios_d_.md#icreateaxiosinstancefromurl) &#124; [ICreateAxiosInstanceFactoryParams](../interfaces/_axios_d_.icreateaxiosinstancefactoryparams.md) |
 
 **Returns:** [ResourceBuilder](_resource_d_.resourcebuilder.md)
 
-___
+---
 
 ## Methods
 
 <a id="build"></a>
 
-###  build
+### build
 
-▸ **build**(buildParams: *[IBuildParams](../interfaces/_resource_d_.ibuildparams.md)*): [IResourceDefault](../interfaces/_resource_d_.iresourcedefault.md)
+▸ **build**(buildParams: _[IBuildParams](../interfaces/_resource_d_.ibuildparams.md)_): [IResourceDefault](../interfaces/_resource_d_.iresourcedefault.md)
 
-▸ **build**ResourceMethods(buildParams: *[IBuildParamsExtended](../interfaces/_resource_d_.ibuildparamsextended.md)<`ResourceMethods`>*): [IBuildParamsExtendedRes](../modules/_resource_d_.md#ibuildparamsextendedres)<`ResourceMethods`>
+▸ **build**ResourceMethods(buildParams: _[IBuildParamsExtended](../interfaces/_resource_d_.ibuildparamsextended.md)<`ResourceMethods`>_): [IBuildParamsExtendedRes](../modules/_resource_d_.md#ibuildparamsextendedres)<`ResourceMethods`>
 
-*__description__*: Creates an axios instance using a function passed (created) into ResourceBuilder constructor and a url passed into this method. Returns an object which has the same properties as a schema you provided (or default schema). Each one of this properties is a function which accepts an action and an optional request config, makes a request using the axios instance created earlier and returns a Promise of this request. action.payload is used as 'data' of the request. Method and optional url from the schema are used as 'method' and 'url' accordingly. You can pass any additional properties with the optional request config. Be aware that the optional request config is applied first. That means you can not override method and url from schema there. You can not override 'data' as well. An additional property \[AxiosResourceAdditionalProps\] is passed to the request config. It's an object with action property inside of it. The action that triggered the request is saved there. you can use it in your interceptors later. @see interceptorAuthorizationToken
+_**description**_: Creates an axios instance using a function passed (created) into ResourceBuilder constructor and a url passed into this method. Returns an object which has the same properties as a schema you provided (or default schema). Each one of this properties is a function which accepts an action and an optional request config, makes a request using the axios instance created earlier and returns a Promise of this request. action.payload is used as 'data' of the request. Method and optional url from the schema are used as 'method' and 'url' accordingly. You can pass any additional properties with the optional request config. Be aware that the optional request config is applied first. That means you can not override method and url from schema there. You can not override 'data' as well. An additional property \[AxiosResourceAdditionalProps\] is passed to the request config. It's an object with action property inside of it. The action that triggered the request is saved there. you can use it in your interceptors later. @see interceptorAuthorizationToken
 
-*__see__*: resourceSchemaDefault
+_**see**_: resourceSchemaDefault
 
-*__example__*: 
+_**example**_:
+
 ```js
 // utils/axios-resource.js
 import { ResourceBuilder } from 'axios-resource'
@@ -133,22 +137,22 @@ export function* entity2DoSomething1Saga (action) {
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| buildParams | [IBuildParams](../interfaces/_resource_d_.ibuildparams.md) |  An object wih resource url and optional resource schema. By default resourceSchemaDefault is used as a schema for the new resource. |
+| Param       | Type                                                       | Description                                                                                                                         |
+| ----------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| buildParams | [IBuildParams](../interfaces/_resource_d_.ibuildparams.md) | An object wih resource url and optional resource schema. By default resourceSchemaDefault is used as a schema for the new resource. |
 
 **Returns:** [IResourceDefault](../interfaces/_resource_d_.iresourcedefault.md)
 
 **Type parameters:**
 
-#### ResourceMethods :  `string`
+#### ResourceMethods : `string`
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param       | Type                                                                                          |
+| ----------- | --------------------------------------------------------------------------------------------- |
 | buildParams | [IBuildParamsExtended](../interfaces/_resource_d_.ibuildparamsextended.md)<`ResourceMethods`> |
 
 **Returns:** [IBuildParamsExtendedRes](../modules/_resource_d_.md#ibuildparamsextendedres)<`ResourceMethods`>
 
-___
-
+---

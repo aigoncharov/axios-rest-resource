@@ -3,8 +3,11 @@
 # Interface: IActionMeta
 
 ## Type parameters
-#### Payload 
-#### Meta 
+
+#### Payload
+
+#### Meta
+
 ## Hierarchy
 
 **IActionMeta**
@@ -13,9 +16,9 @@
 
 ### Properties
 
-* [meta](_resource_d_.iactionmeta.md#meta)
-* [payload](_resource_d_.iactionmeta.md#payload)
-* [type](_resource_d_.iactionmeta.md#type)
+- [meta](_resource_d_.iactionmeta.md#meta)
+- [payload](_resource_d_.iactionmeta.md#payload)
+- [type](_resource_d_.iactionmeta.md#type)
 
 ---
 
@@ -25,21 +28,22 @@
 
 ### `<Optional>` meta
 
-**● meta**: *[Meta]()*
+**● meta**: _[Meta]()_
 
-___
+---
+
 <a id="payload"></a>
 
 ### `<Optional>` payload
 
-**● payload**: *[Payload]()*
+**● payload**: _[Payload]()_
 
-___
+---
+
 <a id="type"></a>
 
-###  type
+### type
 
-**● type**: *`string`*
+**● type**: _`string`_
 
-___
-
+---
