@@ -8,7 +8,7 @@
     "compile": "./node_modules/.bin/tsc -p ./tsconfig.json",
     "lint": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit && ./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json",
     "docs": "npm run compile && ./node_modules/.bin/typedoc --mode modules --ignoreCompilerErrors --excludePrivate --excludeProtected --includeDeclarations --readme none --excludeExternals --theme markdown --mdHideSources --mdEngine github --out ./docs/api ./dist/src/ && find ./docs/api/ -type f -exec sed -i \"s/\\.d\\\"/\\\"/g\" {} \\; && find ./docs/api/ -type f -exec sed -i \"s/\\`\\`\\`js/\\\\n\\`\\`\\`js/g\" {} \\; && npm run markdown-format",
-    "markdown-format": "./node_modules/.bin/prettier --write './**/*.md'"
+    "markdown-format": "./node_modules/.bin/doctoc ./README.md && ./node_modules/.bin/prettier --write './**/*.md'"
   },
   "repository": {
     "type": "git",
