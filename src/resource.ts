@@ -79,12 +79,14 @@ export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
  * it calls createAxiosResourceFactory under the hood. @see createAxiosResourceFactory
  *
  * @example
+ * ```js
  * // utils/axios-resource.js
  * import { ResourceBuilder } from 'axios-resource'
  *
  * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
  *
  * // use it later to create pre-configured axios instances for every resource
+ * ```
  */
 export class ResourceBuilder {
   protected readonly _schemaDefault = resourceSchemaDefault
@@ -120,6 +122,7 @@ export class ResourceBuilder {
    * @see resourceSchemaDefault
    *
    * @example
+   * ```js
    * // utils/axios-resource.js
    * import { ResourceBuilder } from 'axios-resource'
    *
@@ -162,7 +165,7 @@ export class ResourceBuilder {
    *   url: '/entity1',
    *   schema: {
    *     doSomething1: {
-   *       url: '/do-something',
+   *       url: '/do-something1',
    *       method: 'POST'
    *     }
    *   }
@@ -170,7 +173,8 @@ export class ResourceBuilder {
    * // uses cusom schema
    * // exports an object
    * // {
-   * //   doSomething1: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1/do-something
+   * //   doSomething1: (action, requestConfig) => axiosPromise
+   * //   // sends POST http://localhost:3000/entity1/do-something1
    * // }
    *
    * // sagas/entity2.js
@@ -179,9 +183,10 @@ export class ResourceBuilder {
    * // action here is { type: 'ENTITY2_DO_SOMETHING1_INIT' }
    * export function* entity2DoSomething1Saga (action) {
    *   const res = yield call([entity1Resource, entity2Resource.doSomething1], action)
-   *   // sends POST http://localhost:3000/entity2do-something
+   *   // sends POST http://localhost:3000/entity2/do-something1
    *   yield put({ type: 'ENTITY2_DO_SOMETHING1_SUCCESS', payload: res })
    * }
+   * ```
    */
   public build (
     buildParams: IBuildParams

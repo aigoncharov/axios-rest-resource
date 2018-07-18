@@ -16,6 +16,7 @@ export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
  * Applied by default to an axios instance created by createAxiosResourceFactory
  *
  * @example
+ * ```js
  * const axiosInstance = axios.create()
  * axiosInstance.interceptors.request.use(interceptorUrlFormatter)
  * axiosInstance.request({
@@ -39,6 +40,7 @@ export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
  * //   },
  * //   params: {}
  * // }
+ * ```
  */
 export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosRequestConfig => {
   if (!config.params) {
@@ -54,7 +56,7 @@ export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosReques
   return config
 }
 
-export interface IActionMetaAuthorization {
+interface IActionMetaAuthorization {
   meta: {
     authorization: string
   }
@@ -70,6 +72,7 @@ const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAutho
  * adds Authorization header = action.meta.authorization. Useful for JWT tokens.
  *
  * @example
+ * ```js
  * const axiosInstance = axios.create()
  * axiosInstance.interceptors.request.use(interceptorAuthorizationToken)
  * axiosInstance.request({
@@ -89,6 +92,7 @@ const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAutho
  * //     Authorization: 'testToken'
  * //   }
  * // }
+ * ```
  */
 export const interceptorAuthorizationToken = (config: AxiosRequestConfig) => {
   const configExtended = config as IAxiosResourceRequestConfig
@@ -119,6 +123,7 @@ export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
  * Default interceptorUrlFormatter is always applied first.
  *
  * @example
+ * ```js
  * const createAxiosResource = createAxiosResourceFactory({ baseUrl: 'http://localhost:3000' })
  * const entity1Resource = createAxiosResource('/entity1') // baseUrl will be http://localhost:3000/entity1
  * const entity2Resource = createAxiosResource('/entity2') // baseUrl will be http://localhost:3000/entity2
@@ -126,6 +131,7 @@ export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
  * // sends GET http://localhost:3000/entity1
  * entity2Resource.request({ url: '/{id}', method: 'DELETE', params: { id: '123' } })
  * // sends DELTE http://localhost:3000/entity2/123
+ * ```
  */
 export const createAxiosResourceFactory = (
   {

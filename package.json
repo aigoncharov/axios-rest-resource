@@ -6,7 +6,8 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive --use_strict --require ts-node/register './**/*.test.ts'",
     "compile": "./node_modules/.bin/tsc -p ./tsconfig.json",
-    "lint": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit && ./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json"
+    "lint": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit && ./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json",
+    "docs": "npm run compile && ./node_modules/.bin/typedoc --mode modules --ignoreCompilerErrors --excludePrivate --excludeProtected --includeDeclarations --excludeExternals --theme markdown --mdHideSources --mdEngine github  --out ./docs/api ./dist/src/ && find ./docs/api/ -type f -exec sed -i \"s/\\.d\\\"//g\" {} \\; && find ./docs/api/ -type f -exec sed -i \"s/\\`\\`\\`js/\\\\n\\`\\`\\`js/g\" {} \\;"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "tslint": "^5.10.0",
     "tslint-config-standard": "^7.1.0",
     "typedoc": "^0.11.1",
+    "typedoc-plugin-markdown": "^1.1.13",
     "typescript": "^3.0.0-rc"
   },
   "dependencies": {
