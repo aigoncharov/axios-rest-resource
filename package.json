@@ -43,7 +43,7 @@
   "peerDependencies": {
     "axios": "^0.18.0"
   },
-  "precommit": [
+  "pre-commit": [
     "docs",
     "markdown-format"
   ]
