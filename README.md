@@ -98,7 +98,10 @@ interceptorUrlFormatter is always applied. interceptorAuthorizationToken you hav
 You can do it like this:
 
 ```ts
-import { ResourceBuilder, interceptorAuthorizationToken } from "axios-rest-resource";
+import {
+  ResourceBuilder,
+  interceptorAuthorizationToken
+} from "axios-rest-resource";
 
 export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000",
@@ -178,7 +181,10 @@ export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
 As you can see there's a lot you have to remember. Not to keep all those things in mind you utilize [createAxiosResourceFactory](docs/api/README.md#createaxiosresourcefactory).
 
 ```ts
-import { ResourceBuilder, createAxiosResourceFactory } from "axios-rest-resource";
+import {
+  ResourceBuilder,
+  createAxiosResourceFactory
+} from "axios-rest-resource";
 import { AxiosInstance } from "axios";
 
 const createAxiosResource = createAxiosResourceFactory({
