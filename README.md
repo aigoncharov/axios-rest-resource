@@ -27,7 +27,7 @@ npm i axios-rest-resource axios
 - Create axios-rest-resource module in your utils folder
 
   ```ts
-  // utils/axios-rest-resource.ts
+  // utils/resource.ts
   import { ResourceBuilder } from "axios-rest-resource";
 
   export const resourceBuilder = new ResourceBuilder({
@@ -39,7 +39,7 @@ npm i axios-rest-resource axios
 
   ```ts
   // api/entity1.js
-  import { resourceBuilder } from "utils/axios-rest-resource";
+  import { resourceBuilder } from "utils/resource";
 
   export const entity1Resource = resourceBuilder.build({ url: "/entity1" });
   // exports an object
@@ -178,7 +178,7 @@ const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
 export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
 ```
 
-As you can see there's a lot you have to remember. Not to keep all those things in mind you utilize [createAxiosResourceFactory](docs/api/README.md#createaxiosresourcefactory).
+As you can see there's a lot you have to remember. Not to keep all those things in mind you can utilize [createAxiosResourceFactory](docs/api/README.md#createaxiosresourcefactory).
 
 ```ts
 import {
