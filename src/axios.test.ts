@@ -103,8 +103,8 @@ describe('axios', () => {
       )
       const manager = axiosInstance.interceptors.request as any
       expect(manager.handlers.length).to.be.equal(2)
-      expect(manager.handlers[0].fulfilled).to.be.equal(interceptorUrlFormatter)
-      expect(manager.handlers[1].fulfilled).to.be.equal(interceptorAuthorizationToken)
+      expect(manager.handlers[0].fulfilled).to.be.equal(interceptorAuthorizationToken)
+      expect(manager.handlers[1].fulfilled).to.be.equal(interceptorUrlFormatter)
       const axiosPromise = axiosInstance.request(requestConfig)
       await new Promise((resolve) => moxios.wait(resolve))
       expect(moxios.requests.count()).to.be.equal(1)

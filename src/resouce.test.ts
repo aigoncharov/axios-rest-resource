@@ -64,7 +64,7 @@ describe('resource', () => {
         expect(requestConfigRes).to.have.property('method', methodSchema.method.toLowerCase())
         const [ action, requestConfig ] = resourceMethodParams
         expect(requestConfigRes).to.have.property('data', action.payload)
-        expect(requestConfigRes).to.have.property(AxiosResourceAdditionalProps)
+        expect(requestConfigRes[AxiosResourceAdditionalProps]).not.to.be.equal(undefined)
         expect(typeof requestConfigRes[AxiosResourceAdditionalProps]).to.be.equal('object')
         expect(requestConfigRes[AxiosResourceAdditionalProps]).to.have.property('action', action)
         if (requestConfig) {

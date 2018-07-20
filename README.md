@@ -77,7 +77,7 @@ npm i axios-resource axios
 You can pass an optional array of request interceptors to ResourceBuilder's constructor
 
 ```ts
-const resourceBuilder = new ResourceBuilder({
+export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000",
   interceptors: [myRequestInterceptor]
 });
@@ -99,7 +99,7 @@ You can do it like this:
 ```ts
 import { ResourceBuilder, interceptorAuthorizationToken } from "axios-resource";
 
-const resourceBuilder = new ResourceBuilder({
+export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000",
   interceptors: [interceptorAuthorizationToken]
 });
@@ -120,7 +120,7 @@ const interceptorLog = (config: AxiosRequestConfig) => {
   return config;
 };
 
-const resourceBuilder = new ResourceBuilder({
+export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000",
   interceptors: [interceptorAuthorizationToken]
 });
@@ -146,10 +146,50 @@ const interceptorLogAction = (config: AxiosRequestConfig) => {
   return configExtended;
 };
 
-const resourceBuilder = new ResourceBuilder({
+export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000",
   interceptors: [interceptorAuthorizationToken, interceptorLogAction]
 });
+```
+
+## Adavanced usage
+
+You can pass a custom axios instance factory to ResourceBuilder. It's useful if you want to do something more with your axios instance but assign 'baseUrl' and add request inerceptors.
+
+```ts
+import { ResourceBuilder } from "axios-resource";
+import axios, { AxiosInstance } from 'axios';
+
+const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
+  const axiosInstance = axios.create({ baseUrl: 'http://localshot:3000' })
+  // This time we want to add response interceptors
+  axiosInstance.interceptors.response.use(myResponeInterceptor)
+  // Don't forget to add interceptorUrlFormatter if you want to keep {token} replacement in urls
+  axiosInstance.interceptors.request.use(interceptorUrlFormatter)
+  // Don't forget to append resourceUrl to baseUrl 
+  axiosInstance.defaults.baseURL += resourceUrl
+  return axiosInstance
+}
+
+export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
+```
+
+As you can see there's a lot you have to remember. Not to keep all those things in mind you utilize [createAxiosResourceFactory](docs/api/README.md#createaxiosresourcefactory).
+
+```ts
+import { ResourceBuilder, createAxiosResourceFactory } from "axios-resource";
+import { AxiosInstance } from 'axios';
+
+const createAxiosResource = createAxiosResourceFactory({ baseUrl: 'http://localshot:3000' })
+const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
+  // Creates an axios instance with appended resourceUrl and applied interceptorUrlFormatter. You can pass an additional array of request interceptors just like with ResourceBuilder. In fact ResourceBuilder uses this very function uner the hood.
+  const axiosInstance = createAxiosResource(resourceUrl)
+  // Add that response interceptor
+  axiosInstance.interceptors.response.use(myResponeInterceptor)
+  return axiosInstance
+}
+
+export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
 ```
 
 ## API
