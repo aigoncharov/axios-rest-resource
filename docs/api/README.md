@@ -131,7 +131,7 @@
 
 ### `<Const>` createAxiosResourceFactory
 
-_**description**_: Factory that accepts default axios request config and an optional array of request interceptors, returns a function that accepts a resource url and returns a configured axios instance. Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter If you pass no interceptors only default interceptorUrlFormatteris applied. Interceptors you provided are applied with respect to the order. Default interceptorUrlFormatter is always applied first.
+_**description**_: Factory that accepts default axios request config and an optional array of request interceptors, returns a function that accepts a resource url and returns a configured axios instance. Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter If you pass no interceptors only default interceptorUrlFormatteris applied. Interceptors you provided are applied with respect to the order in reverse. Default interceptorUrlFormatter is always applied first.
 
 _**example**_:
 
