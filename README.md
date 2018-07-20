@@ -1,4 +1,4 @@
-# axios-resource
+# axios-rest-resource
 
 A small library that creates a pre-configured instance of axios to make HTTP requests to REST resources. Written in Typescript. Heavily inspired by AngularJS' $resource.
 
@@ -19,16 +19,16 @@ A small library that creates a pre-configured instance of axios to make HTTP req
 ## Installation
 
 ```
-npm i axios-resource axios
+npm i axios-rest-resource axios
 ```
 
 ## Quick start
 
-- Create axios-resource module in your utils folder
+- Create axios-rest-resource module in your utils folder
 
   ```ts
-  // utils/axios-resource.ts
-  import { ResourceBuilder } from "axios-resource";
+  // utils/axios-rest-resource.ts
+  import { ResourceBuilder } from "axios-rest-resource";
 
   export const resourceBuilder = new ResourceBuilder({
     baseUrl: "http://localhost:3000"
@@ -39,7 +39,7 @@ npm i axios-resource axios
 
   ```ts
   // api/entity1.js
-  import { resourceBuilder } from "utils/axios-resource";
+  import { resourceBuilder } from "utils/axios-rest-resource";
 
   export const entity1Resource = resourceBuilder.build({ url: "/entity1" });
   // exports an object
@@ -84,7 +84,7 @@ export const resourceBuilder = new ResourceBuilder({
 });
 ```
 
-You can read more about interceptors [here](https://github.com/axios/axios#interceptors). The only difference with axios' original interceptors is that axios-resource passes an extended version of [AxiosRequestConfig](https://github.com/axios/axios#request-config) to its interceptors. It has an additional property [AxiosResourceAdditionalProps](docs/api/README.md#axiosresourceadditionalprops). You can read more about it [here](docs/interfaces/iaxiosresourcerequestconfig.md). It contains an object with an action that triggerred that request. Most of the time you do not need to worry about it unless you want to access that action's data.
+You can read more about interceptors [here](https://github.com/axios/axios#interceptors). The only difference with axios' original interceptors is that axios-rest-resource passes an extended version of [AxiosRequestConfig](https://github.com/axios/axios#request-config) to its interceptors. It has an additional property [AxiosResourceAdditionalProps](docs/api/README.md#axiosresourceadditionalprops). You can read more about it [here](docs/interfaces/iaxiosresourcerequestconfig.md). It contains an object with an action that triggerred that request. Most of the time you do not need to worry about it unless you want to access that action's data.
 
 ### Default interceptors
 
@@ -98,7 +98,7 @@ interceptorUrlFormatter is always applied. interceptorAuthorizationToken you hav
 You can do it like this:
 
 ```ts
-import { ResourceBuilder, interceptorAuthorizationToken } from "axios-resource";
+import { ResourceBuilder, interceptorAuthorizationToken } from "axios-rest-resource";
 
 export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000",
@@ -111,12 +111,12 @@ export const resourceBuilder = new ResourceBuilder({
 Here's how you can create an interceptor that logs all requests adn apply it:
 
 ```ts
-import { ResourceBuilder } from "axios-resource";
+import { ResourceBuilder } from "axios-rest-resource";
 import { AxiosRequestConfig } from "axios";
 
 const interceptorLog = (config: AxiosRequestConfig) => {
   console.log(
-    `axios-resource.interceptorLog -> request ${JSON.stringify(config)}`
+    `axios-rest-resource.interceptorLog -> request ${JSON.stringify(config)}`
   );
   return config;
 };
@@ -134,13 +134,13 @@ import {
   ResourceBuilder,
   IAxiosResourceRequestConfig,
   AxiosResourceAdditionalProps
-} from "axios-resource";
+} from "axios-rest-resource";
 import { AxiosRequestConfig } from "axios";
 
 const interceptorLogAction = (config: AxiosRequestConfig) => {
   const configExtended = config as IAxiosResourceRequestConfig;
   console.log(
-    `axios-resource.interceptorLogAction -> action ${JSON.stringify(
+    `axios-rest-resource.interceptorLogAction -> action ${JSON.stringify(
       configExtended[AxiosResourceAdditionalProps].action
     )}`
   );
@@ -158,7 +158,7 @@ export const resourceBuilder = new ResourceBuilder({
 You can pass a custom axios instance factory to ResourceBuilder. It's useful if you want to do something more with your axios instance but assign 'baseUrl' and add request inerceptors.
 
 ```ts
-import { ResourceBuilder } from "axios-resource";
+import { ResourceBuilder } from "axios-rest-resource";
 import axios, { AxiosInstance } from "axios";
 
 const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
@@ -178,7 +178,7 @@ export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
 As you can see there's a lot you have to remember. Not to keep all those things in mind you utilize [createAxiosResourceFactory](docs/api/README.md#createaxiosresourcefactory).
 
 ```ts
-import { ResourceBuilder, createAxiosResourceFactory } from "axios-resource";
+import { ResourceBuilder, createAxiosResourceFactory } from "axios-rest-resource";
 import { AxiosInstance } from "axios";
 
 const createAxiosResource = createAxiosResourceFactory({

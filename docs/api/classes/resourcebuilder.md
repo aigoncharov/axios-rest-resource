@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [ResourceBuilder](../classes/resourcebuilder.md)
+[axios-rest-resource](../README.md) > [ResourceBuilder](../classes/resourcebuilder.md)
 
 # Class: ResourceBuilder
 
@@ -9,8 +9,8 @@ _**param**_: Either axios request config with an optional array of request inter
 _**example**_:
 
 ```js
-// utils/axios-resource.js
-import { ResourceBuilder } from "axios-resource";
+// utils/axios-rest-resource.js
+import { ResourceBuilder } from "axios-rest-resource";
 
 export const resourceBuilder = new ResourceBuilder({
   baseUrl: "http://localhost:3000"
@@ -70,13 +70,13 @@ _**see**_: resourceSchemaDefault
 _**example**_:
 
 ```js
-// utils/axios-resource.js
-import { ResourceBuilder } from 'axios-resource'
+// utils/axios-rest-resource.js
+import { ResourceBuilder } from 'axios-rest-resource'
 
 export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
 
 // api/entity1.js
-import { resourceBuilder } from 'utils/axios-resource'
+import { resourceBuilder } from 'utils/axios-rest-resource'
 
 export const entity1Resource = resourceBuilder.build({ url: '/entity1' })
 // uses default schema
@@ -106,7 +106,7 @@ export function* entity1ReadOneSaga (action) {
 }
 
 // api/entity2.js
-import { resourceBuilder } from 'utils/axios-resource'
+import { resourceBuilder } from 'utils/axios-rest-resource'
 
 export const entity1Resource = resourceBuilder.build({
   url: '/entity1',

@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [IActionMetaAuthorization](../interfaces/iactionmetaauthorization.md)
+[axios-rest-resource](../README.md) > [IActionMetaAuthorization](../interfaces/iactionmetaauthorization.md)
 
 # Interface: IActionMetaAuthorization
 

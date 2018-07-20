@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [IResourceDefault](../interfaces/iresourcedefault.md)
+[axios-rest-resource](../README.md) > [IResourceDefault](../interfaces/iresourcedefault.md)
 
 # Interface: IResourceDefault
 

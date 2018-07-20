@@ -1,4 +1,4 @@
-# axios-resource
+# axios-rest-resource
 
 ## Index
 
@@ -121,7 +121,7 @@
 
 ### `<Const>` AxiosResourceAdditionalProps
 
-**● AxiosResourceAdditionalProps**: _"axios-resource/AxiosResourceAdditionalProps"_ = "axios-resource/AxiosResourceAdditionalProps"
+**● AxiosResourceAdditionalProps**: _"axios-rest-resource/AxiosResourceAdditionalProps"_ = "axios-rest-resource/AxiosResourceAdditionalProps"
 
 ---
 

@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [IAPIMethodSchema](../interfaces/iapimethodschema.md)
+[axios-rest-resource](../README.md) > [IAPIMethodSchema](../interfaces/iapimethodschema.md)
 
 # Interface: IAPIMethodSchema
 

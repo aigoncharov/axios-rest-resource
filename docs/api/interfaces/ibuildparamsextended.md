@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [IBuildParamsExtended](../interfaces/ibuildparamsextended.md)
+[axios-rest-resource](../README.md) > [IBuildParamsExtended](../interfaces/ibuildparamsextended.md)
 
 # Interface: IBuildParamsExtended
 

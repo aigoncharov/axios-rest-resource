@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [IActionMeta](../interfaces/iactionmeta.md)
+[axios-rest-resource](../README.md) > [IActionMeta](../interfaces/iactionmeta.md)
 
 # Interface: IActionMeta
 

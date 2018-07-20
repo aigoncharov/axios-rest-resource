@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
-export const AxiosResourceAdditionalProps = 'axios-resource/AxiosResourceAdditionalProps'
+export const AxiosResourceAdditionalProps = 'axios-rest-resource/AxiosResourceAdditionalProps'
 export interface IAxiosResourceRequestConfigExtraData {
   action: unknown
 }

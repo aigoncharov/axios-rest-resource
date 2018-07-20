@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > [ICreateAxiosInstanceFactoryParams](../interfaces/icreateaxiosinstancefactoryparams.md)
+[axios-rest-resource](../README.md) > [ICreateAxiosInstanceFactoryParams](../interfaces/icreateaxiosinstancefactoryparams.md)
 
 # Interface: ICreateAxiosInstanceFactoryParams
 

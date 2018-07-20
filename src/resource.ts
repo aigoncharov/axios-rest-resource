@@ -80,8 +80,8 @@ export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
  *
  * @example
  * ```js
- * // utils/axios-resource.js
- * import { ResourceBuilder } from 'axios-resource'
+ * // utils/axios-rest-resource.js
+ * import { ResourceBuilder } from 'axios-rest-resource'
  *
  * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
  *
@@ -123,13 +123,13 @@ export class ResourceBuilder {
    *
    * @example
    * ```js
-   * // utils/axios-resource.js
-   * import { ResourceBuilder } from 'axios-resource'
+   * // utils/axios-rest-resource.js
+   * import { ResourceBuilder } from 'axios-rest-resource'
    *
    * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
    *
    * // api/entity1.js
-   * import { resourceBuilder } from 'utils/axios-resource'
+   * import { resourceBuilder } from 'utils/axios-rest-resource'
    *
    * export const entity1Resource = resourceBuilder.build({ url: '/entity1' })
    * // uses default schema
@@ -159,7 +159,7 @@ export class ResourceBuilder {
    * }
    *
    * // api/entity2.js
-   * import { resourceBuilder } from 'utils/axios-resource'
+   * import { resourceBuilder } from 'utils/axios-rest-resource'
    *
    * export const entity1Resource = resourceBuilder.build({
    *   url: '/entity1',

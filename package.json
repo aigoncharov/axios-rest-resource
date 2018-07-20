@@ -1,25 +1,26 @@
 {
-  "name": "axios-resource",
+  "name": "axios-rest-resource",
   "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive --use_strict --require ts-node/register './**/*.test.ts'",
-    "compile": "npm run install-all && ./node_modules/.bin/tsc -p ./tsconfig.json",
+    "compile": "./node_modules/.bin/tsc -p ./tsconfig.json",
     "lint": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit && ./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json",
     "docs": "rm -rf docs/api && ./node_modules/.bin/typedoc --tsconfig ./tsconfig.docs.json --mode file --ignoreCompilerErrors --excludePrivate --excludeProtected --readme none --theme markdown --mdHideSources --mdEngine github --out ./docs/api ./index.ts && find ./docs/api/ -type f -exec sed -i \"s/\\`\\`\\`js/\\\\n\\`\\`\\`js/g\" {} \\; && npm run markdown-format",
-    "markdown-format": "./node_modules/.bin/doctoc ./README.md && ./node_modules/.bin/prettier --write './**/*.md'"
+    "markdown-format": "./node_modules/.bin/doctoc ./README.md && ./node_modules/.bin/prettier --write './**/*.md'",
+    "prepack": "npm run compile"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keenondrums/axios-resource.git"
+    "url": "git+https://github.com/keenondrums/axios-rest-resource.git"
   },
   "author": "keenondrums",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/keenondrums/axios-resource/issues"
+    "url": "https://github.com/keenondrums/axios-rest-resource/issues"
   },
-  "homepage": "https://github.com/keenondrums/axios-resource#readme",
+  "homepage": "https://github.com/keenondrums/axios-rest-resource#readme",
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.4",
