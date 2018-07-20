@@ -1,7 +1,19 @@
 {
   "name": "axios-rest-resource",
   "version": "0.1.1",
-  "description": "",
+  "description": "A small library that creates a pre-configured instance of axios to make HTTP requests to REST resources. Written in Typescript. Heavily inspired by AngularJS' $resource",
+  "keywords": [
+    "axios",
+    "rest",
+    "resource",
+    "request",
+    "ajax",
+    "redux",
+    "saga",
+    "flux",
+    "action",
+    "react"
+  ],
   "main": "dist/index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --recursive --use_strict --require ts-node/register './**/*.test.ts'",
