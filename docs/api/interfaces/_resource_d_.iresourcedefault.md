@@ -24,7 +24,7 @@
 
 ### create
 
-**● create**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
+**● create**: _[IAPIMethod](../modules/\_resource_d_.md#iapimethod)\_
 
 ---
 
@@ -32,7 +32,7 @@
 
 ### read
 
-**● read**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
+**● read**: _[IAPIMethod](../modules/\_resource_d_.md#iapimethod)\_
 
 ---
 
@@ -40,7 +40,7 @@
 
 ### readOne
 
-**● readOne**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
+**● readOne**: _[IAPIMethod](../modules/\_resource_d_.md#iapimethod)\_
 
 ---
 
@@ -48,7 +48,7 @@
 
 ### remove
 
-**● remove**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
+**● remove**: _[IAPIMethod](../modules/\_resource_d_.md#iapimethod)\_
 
 ---
 
@@ -56,6 +56,6 @@
 
 ### update
 
-**● update**: _[IAPIMethod](../modules/_resource_d_.md#iapimethod)_
+**● update**: _[IAPIMethod](../modules/\_resource_d_.md#iapimethod)\_
 
 ---

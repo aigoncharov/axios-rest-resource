@@ -47,7 +47,7 @@
 
 ### \_\_computed
 
-**● \_\_computed**: _[IAxiosResourceRequestConfigExtraData](_axios_d_.iaxiosresourcerequestconfigextradata.md)_
+**● \_\_computed**: _[IAxiosResourceRequestConfigExtraData](\_axios_d_.iaxiosresourcerequestconfigextradata.md)\_
 
 ---
 

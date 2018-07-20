@@ -111,7 +111,7 @@
 
 ### `<Optional>` interceptors
 
-**● interceptors**: _[IAxiosResourceInterceptor](../modules/_axios_d_.md#iaxiosresourceinterceptor)[]_
+**● interceptors**: _[IAxiosResourceInterceptor](../modules/\_axios_d_.md#iaxiosresourceinterceptor)[]\_
 
 ---
 

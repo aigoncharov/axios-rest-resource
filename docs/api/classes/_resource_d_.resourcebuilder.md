@@ -41,7 +41,7 @@ export const resourceBuilder = new ResourceBuilder({
 
 ### constructor
 
-⊕ **new ResourceBuilder**(createParams: _ [ICreateAxiosInstanceFromUrl](../modules/_axios_d_.md#icreateaxiosinstancefromurl) &#124; [ICreateAxiosInstanceFactoryParams](../interfaces/_axios_d_.icreateaxiosinstancefactoryparams.md)_): [ResourceBuilder](_resource_d_.resourcebuilder.md)
+⊕ **new ResourceBuilder**(createParams: _ [ICreateAxiosInstanceFromUrl](../modules/\_axios_d_.md#icreateaxiosinstancefromurl) &#124; [ICreateAxiosInstanceFactoryParams](../interfaces/_axios_d_.icreateaxiosinstancefactoryparams.md)_): [ResourceBuilder](\_resource_d_.resourcebuilder.md)
 
 **Parameters:**
 
@@ -59,9 +59,9 @@ export const resourceBuilder = new ResourceBuilder({
 
 ### build
 
-▸ **build**(buildParams: _[IBuildParams](../interfaces/_resource_d_.ibuildparams.md)_): [IResourceDefault](../interfaces/_resource_d_.iresourcedefault.md)
+▸ **build**(buildParams: _[IBuildParams](../interfaces/\_resource_d_.ibuildparams.md)_): [IResourceDefault](../interfaces/\_resource_d_.iresourcedefault.md)
 
-▸ **build**ResourceMethods(buildParams: _[IBuildParamsExtended](../interfaces/_resource_d_.ibuildparamsextended.md)<`ResourceMethods`>_): [IBuildParamsExtendedRes](../modules/_resource_d_.md#ibuildparamsextendedres)<`ResourceMethods`>
+▸ **build**ResourceMethods(buildParams: _[IBuildParamsExtended](../interfaces/\_resource_d_.ibuildparamsextended.md)<`ResourceMethods`>_): [IBuildParamsExtendedRes](../modules/\_resource_d_.md#ibuildparamsextendedres)<`ResourceMethods`>
 
 _**description**_: Creates an axios instance using a function passed (created) into ResourceBuilder constructor and a url passed into this method. Returns an object which has the same properties as a schema you provided (or default schema). Each one of this properties is a function which accepts an action and an optional request config, makes a request using the axios instance created earlier and returns a Promise of this request. action.payload is used as 'data' of the request. Method and optional url from the schema are used as 'method' and 'url' accordingly. You can pass any additional properties with the optional request config. Be aware that the optional request config is applied first. That means you can not override method and url from schema there. You can not override 'data' as well. An additional property \[AxiosResourceAdditionalProps\] is passed to the request config. It's an object with action property inside of it. The action that triggered the request is saved there. you can use it in your interceptors later. @see interceptorAuthorizationToken
 

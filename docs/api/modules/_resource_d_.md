@@ -38,7 +38,7 @@
 
 #### Type declaration
 
-▸(action: _[IActionMeta](../interfaces/_resource_d_.iactionmeta.md)<`any`, `any`>_, requestConfig?: _`Partial`<`AxiosRequestConfig`>_): `AxiosPromise`
+▸(action: _[IActionMeta](../interfaces/\_resource_d_.iactionmeta.md)<`any`, `any`>_, requestConfig?: _`Partial`<`AxiosRequestConfig`>\_): `AxiosPromise`
 
 **Parameters:**
 
