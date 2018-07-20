@@ -25,6 +25,7 @@
 - [IAxiosResourceInterceptor](#iaxiosresourceinterceptor)
 - [IBuildParamsExtendedRes](#ibuildparamsextendedres)
 - [ICreateAxiosInstanceFromUrl](#icreateaxiosinstancefromurl)
+- [IResourceSchemaKeysDefault](#iresourceschemakeysdefault)
 
 ### Variables
 
@@ -112,6 +113,15 @@
 | resourceUrl | `string` |
 
 **Returns:** `AxiosInstance`
+
+---
+
+<a id="iresourceschemakeysdefault"></a>
+
+### IResourceSchemaKeysDefault
+
+**ΤIResourceSchemaKeysDefault**: _ "create" &#124; "read" &#124; "readOne" &#124; "remove" &#124; "update"
+_
 
 ---
 

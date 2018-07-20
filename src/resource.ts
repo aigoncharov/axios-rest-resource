@@ -33,11 +33,13 @@ export interface IAPIMethodSchema {
   url?: string
 }
 
+export type IResourceSchemaKeysDefault = 'create' | 'read' | 'readOne' | 'remove' | 'update'
+
 /**
  * @description
  * Default resource schema used by ResourceBuilder.prototype.build
  */
-export const resourceSchemaDefault = {
+export const resourceSchemaDefault: { [ Key in IResourceSchemaKeysDefault ]: IAPIMethodSchema } = {
   create: {
     method: 'post'
   },
