@@ -83,7 +83,7 @@ export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
  * // utils/axios-rest-resource.js
  * import { ResourceBuilder } from 'axios-rest-resource'
  *
- * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
+ * export const resourceBuilder = new ResourceBuilder({ baseURL: 'http://localhost:3000' })
  *
  * // use it later to create pre-configured axios instances for every resource
  * ```
@@ -126,7 +126,7 @@ export class ResourceBuilder {
    * // utils/axios-rest-resource.js
    * import { ResourceBuilder } from 'axios-rest-resource'
    *
-   * export const resourceBuilder = new ResourceBuilder({ baseUrl: 'http://localhost:3000' })
+   * export const resourceBuilder = new ResourceBuilder({ baseURL: 'http://localhost:3000' })
    *
    * // api/entity1.js
    * import { resourceBuilder } from 'utils/axios-rest-resource'

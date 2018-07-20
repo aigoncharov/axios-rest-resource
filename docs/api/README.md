@@ -137,10 +137,10 @@ _**example**_:
 
 ```js
 const createAxiosResource = createAxiosResourceFactory({
-  baseUrl: "http://localhost:3000"
+  baseURL: "http://localhost:3000"
 });
-const entity1Resource = createAxiosResource("/entity1"); // baseUrl will be http://localhost:3000/entity1
-const entity2Resource = createAxiosResource("/entity2"); // baseUrl will be http://localhost:3000/entity2
+const entity1Resource = createAxiosResource("/entity1"); // baseURL will be http://localhost:3000/entity1
+const entity2Resource = createAxiosResource("/entity2"); // baseURL will be http://localhost:3000/entity2
 entity1Resource.request({ url: "/", method: "GET" });
 // sends GET http://localhost:3000/entity1
 entity2Resource.request({
@@ -176,7 +176,7 @@ const axiosInstance = axios.create();
 axiosInstance.interceptors.request.use(interceptorAuthorizationToken);
 axiosInstance.request({
   url: "/",
-  baseUrl: "http://localhost:3000/resource",
+  baseURL: "http://localhost:3000/resource",
   method: "POST",
   [AxiosResourceAdditionalProps]: {
     action: { meta: "testToken", type: "ACTION" }
@@ -185,7 +185,7 @@ axiosInstance.request({
 // interceptorAuthorizationToken processes config before making an ajax request. Processed config:
 // {
 //   url: '/',
-//   baseUrl: 'http://localhost:3000/resource',
+//   baseURL: 'http://localhost:3000/resource',
 //   method: 'POST',
 //   headers: {
 //     Authorization: 'testToken'
@@ -218,7 +218,7 @@ const axiosInstance = axios.create();
 axiosInstance.interceptors.request.use(interceptorUrlFormatter);
 axiosInstance.request({
   url: "/{id}",
-  baseUrl: "http://localhost:3000/resource",
+  baseURL: "http://localhost:3000/resource",
   method: "POST",
   data: {
     field: "value"
@@ -230,7 +230,7 @@ axiosInstance.request({
 // interceptorUrlFormatter processes config before making an ajax request. Processed config:
 // {
 //   url: '/123',
-//   baseUrl: 'http://localhost:3000/resource',
+//   baseURL: 'http://localhost:3000/resource',
 //   method: 'POST',
 //   data: {
 //     field: 'value'
