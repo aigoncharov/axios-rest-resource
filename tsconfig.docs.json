@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outFile": "./tmp/axios-resource.js",
+    "module": "system",
+    "removeComments": false
+  },
+  "files": [
+    "./node_modules/axios/index.d.ts",
+    "./index.ts"
+  ]
+}

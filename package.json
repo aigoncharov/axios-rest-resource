@@ -4,11 +4,10 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "install-all": "npm i --no-save axios && npm i",
     "test": "./node_modules/.bin/mocha --recursive --use_strict --require ts-node/register './**/*.test.ts'",
     "compile": "npm run install-all && ./node_modules/.bin/tsc -p ./tsconfig.json",
     "lint": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit && ./node_modules/.bin/tslint -c ./tslint.json -p ./tsconfig.json",
-    "docs": "npm run compile && ./node_modules/.bin/typedoc --mode modules --ignoreCompilerErrors --excludePrivate --excludeProtected --includeDeclarations --readme none --excludeExternals --theme markdown --mdHideSources --mdEngine github --out ./docs/api ./dist/src/ && find ./docs/api/ -type f -exec sed -i \"s/\\.d\\\"/\\\"/g\" {} \\; && find ./docs/api/ -type f -exec sed -i \"s/\\`\\`\\`js/\\\\n\\`\\`\\`js/g\" {} \\; && npm run markdown-format",
+    "docs": "rm -rf docs/api && ./node_modules/.bin/typedoc --tsconfig ./tsconfig.docs.json --mode file --ignoreCompilerErrors --excludePrivate --excludeProtected --readme none --theme markdown --mdHideSources --mdEngine github --out ./docs/api ./index.ts && find ./docs/api/ -type f -exec sed -i \"s/\\`\\`\\`js/\\\\n\\`\\`\\`js/g\" {} \\; && npm run markdown-format",
     "markdown-format": "./node_modules/.bin/doctoc ./README.md && ./node_modules/.bin/prettier --write './**/*.md'"
   },
   "repository": {
@@ -38,7 +37,7 @@
     "tslint": "^5.10.0",
     "tslint-config-standard": "^7.1.0",
     "typedoc": "^0.11.1",
-    "typedoc-plugin-markdown": "^1.1.13",
+    "typedoc-plugin-markdown": "git+https://git@github.com/keenondrums/typedoc-plugin-markdown.git",
     "typescript": "^3.0.0-rc"
   },
   "peerDependencies": {

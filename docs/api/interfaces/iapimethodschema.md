@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > ["resource"](../modules/_resource_d_.md) > [IAPIMethodSchema](../interfaces/_resource_d_.iapimethodschema.md)
+[axios-resource](../README.md) > [IAPIMethodSchema](../interfaces/iapimethodschema.md)
 
 # Interface: IAPIMethodSchema
 
@@ -10,8 +10,8 @@
 
 ### Properties
 
-- [method](_resource_d_.iapimethodschema.md#method)
-- [url](_resource_d_.iapimethodschema.md#url)
+- [method](iapimethodschema.md#method)
+- [url](iapimethodschema.md#url)
 
 ---
 

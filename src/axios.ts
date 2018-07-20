@@ -61,6 +61,9 @@ interface IActionMetaAuthorization {
     authorization: string
   }
 }
+/**
+ * @hidden
+ */
 const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAuthorization => {
   const actionTyped = action as IActionMetaAuthorization
   return !!(actionTyped.meta && actionTyped.meta.authorization)

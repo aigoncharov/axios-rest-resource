@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > ["resource"](../modules/_resource_d_.md) > [IActionMeta](../interfaces/_resource_d_.iactionmeta.md)
+[axios-resource](../README.md) > [IActionMeta](../interfaces/iactionmeta.md)
 
 # Interface: IActionMeta
 
@@ -16,9 +16,9 @@
 
 ### Properties
 
-- [meta](_resource_d_.iactionmeta.md#meta)
-- [payload](_resource_d_.iactionmeta.md#payload)
-- [type](_resource_d_.iactionmeta.md#type)
+- [meta](iactionmeta.md#meta)
+- [payload](iactionmeta.md#payload)
+- [type](iactionmeta.md#type)
 
 ---
 

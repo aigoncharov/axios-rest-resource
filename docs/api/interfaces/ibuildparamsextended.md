@@ -1,4 +1,4 @@
-[axios-resource](../README.md) > ["resource"](../modules/_resource_d_.md) > [IBuildParamsExtended](../interfaces/_resource_d_.ibuildparamsextended.md)
+[axios-resource](../README.md) > [IBuildParamsExtended](../interfaces/ibuildparamsextended.md)
 
 # Interface: IBuildParamsExtended
 
@@ -8,7 +8,7 @@
 
 ## Hierarchy
 
-[IBuildParams](_resource_d_.ibuildparams.md)
+[IBuildParams](ibuildparams.md)
 
 **↳ IBuildParamsExtended**
 
@@ -16,8 +16,8 @@
 
 ### Properties
 
-- [schema](_resource_d_.ibuildparamsextended.md#schema)
-- [url](_resource_d_.ibuildparamsextended.md#url)
+- [schema](ibuildparamsextended.md#schema)
+- [url](ibuildparamsextended.md#url)
 
 ---
 

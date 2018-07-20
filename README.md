@@ -9,8 +9,8 @@ A small library that creates a pre-configured instance of axios to make HTTP req
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Request interceptors](#request-interceptors)
-- [Default interceptors](#default-interceptors)
-- [Creating custom interceptors](#creating-custom-interceptors)
+  - [Default interceptors](#default-interceptors)
+  - [Creating custom interceptors](#creating-custom-interceptors)
 - [API](#api)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -83,14 +83,14 @@ const resourceBuilder = new ResourceBuilder({
 });
 ```
 
-You can read more about interceptors [here](https://github.com/axios/axios#interceptors). The only difference with axios' original interceptors is that axios-resource passes an extended version of [AxiosRequestConfig](https://github.com/axios/axios#request-config) to its interceptors. It has an additional property [AxiosResourceAdditionalProps](_axios_d_.md#axiosresourceadditionalprops). You can read more about it [here](docs/interfaces/_axios_d_.iaxiosresourcerequestconfig.md). It contains an object with an action that triggerred that request. Most of the time you do not need to worry about it unless you want to access that action's data.
+You can read more about interceptors [here](https://github.com/axios/axios#interceptors). The only difference with axios' original interceptors is that axios-resource passes an extended version of [AxiosRequestConfig](https://github.com/axios/axios#request-config) to its interceptors. It has an additional property [AxiosResourceAdditionalProps](docs/api/README.md#axiosresourceadditionalprops). You can read more about it [here](docs/interfaces/iaxiosresourcerequestconfig.md). It contains an object with an action that triggerred that request. Most of the time you do not need to worry about it unless you want to access that action's data.
 
-## Default interceptors
+### Default interceptors
 
 Axios-recource exposes two pre-defined interceptors:
 
-- [interceptorUrlFormatter](docs/_axios_d_.md#interceptorurlformatter)
-- [interceptorAuthorizationToken](_axios_d_.md#interceptorauthorizationtoken)
+- [interceptorUrlFormatter](docs/api/README.md#interceptorurlformatter)
+- [interceptorAuthorizationToken](docs/api/README.md#interceptorauthorizationtoken)
 
 interceptorUrlFormatter is always applied. interceptorAuthorizationToken you have to apply manually if you want to.
 
@@ -105,7 +105,7 @@ const resourceBuilder = new ResourceBuilder({
 });
 ```
 
-## Creating custom interceptors
+### Creating custom interceptors
 
 Here's how you can create an interceptor that logs all requests adn apply it:
 
@@ -126,7 +126,7 @@ const resourceBuilder = new ResourceBuilder({
 });
 ```
 
-If you want to access that additional property [AxiosResourceAdditionalProps](_axios_d_.md#axiosresourceadditionalprops), you can do this:
+If you want to access that additional property [AxiosResourceAdditionalProps](docs/api/README.md#axiosresourceadditionalprops), you can do this:
 
 ```ts
 import {
