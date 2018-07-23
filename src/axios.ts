@@ -119,6 +119,7 @@ export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
  * @description
  * Factory that accepts default axios request config and an optional array of request interceptors,
  * returns a function that accepts a resource url and returns a configured axios instance.
+ * That instance have resourceUrl appended to baseURL and 'Accept' header set to 'application/json'.
  * Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter
  * If you pass no interceptors only default interceptorUrlFormatteris applied.
  * Interceptors you provided are applied with respect to the order in reverse.
@@ -138,15 +139,21 @@ export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
 export const createAxiosResourceFactory = (
   {
     interceptors = [],
+    baseURL,
     ...config
   }: ICreateAxiosInstanceFactoryParams
 ): ICreateAxiosInstanceFromUrl =>
 (resourceUrl) => {
-  const axiosInstance = axios.create(config)
+  const axiosInstance = axios.create({
+    baseURL: `${baseURL}${resourceUrl}`,
+    headers: {
+      Accept: 'application/json'
+    },
+    ...config
+  })
   for (const interceptor of interceptors) {
     axiosInstance.interceptors.request.use(interceptor)
   }
   axiosInstance.interceptors.request.use(interceptorUrlFormatter)
-  axiosInstance.defaults.baseURL += resourceUrl
   return axiosInstance
 }

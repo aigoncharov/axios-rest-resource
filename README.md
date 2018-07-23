@@ -4,13 +4,13 @@ A small library that creates a pre-configured instance of axios to make HTTP req
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Request interceptors](#request-interceptors)
   - [Default interceptors](#default-interceptors)
   - [Creating custom interceptors](#creating-custom-interceptors)
+- [Custom resource schema](#custom-resource-schema)
 - [Adavanced usage](#adavanced-usage)
 - [API](#api)
 
@@ -24,7 +24,7 @@ npm i axios-rest-resource axios
 
 ## Quick start
 
-- Create axios-rest-resource module in your utils folder
+- Create resource module in your utils folder
 
   ```ts
   // utils/resource.ts
@@ -91,7 +91,9 @@ You can read more about interceptors [here](https://github.com/axios/axios#inter
 Axios-recource exposes two pre-defined interceptors:
 
 - [interceptorUrlFormatter](docs/api/README.md#interceptorurlformatter)
+  Handles {token} subsitution in urls
 - [interceptorAuthorizationToken](docs/api/README.md#interceptorauthorizationtoken)
+  Adds Authorization header
 
 interceptorUrlFormatter is always applied. interceptorAuthorizationToken you have to apply manually if you want to.
 
@@ -156,6 +158,120 @@ export const resourceBuilder = new ResourceBuilder({
 });
 ```
 
+## Custom resource schema
+
+- Create resource module in your utils folder
+
+  ```ts
+  // utils/resource.ts
+  import { ResourceBuilder } from "axios-rest-resource";
+
+  export const resourceBuilder = new ResourceBuilder({
+    baseURL: "http://localhost:3000"
+  });
+  ```
+
+- Using a newly created resource builder create an actual resource
+
+  ```ts
+  // api/entity2.js
+  import {
+    IResourceSchemaKeysDefault,
+    resourceSchemaDefault
+  } from "axios-rest-resource";
+  import { resourceBuilder } from "utils/resource";
+
+  export const entity2Resource = resourceBuilder.build<
+    IResourceSchemaKeysDefault | "doSomething"
+  >({
+    schema: {
+      ...resourceSchemaDefault,
+      doSomething: {
+        method: "post",
+        url: "/do-something"
+      }
+    },
+    url: "/entity2"
+  });
+  // exports an object
+  // {
+  //   create: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity2,
+  //   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity2,
+  //   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity2/{id},
+  //   remove: (action, requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity2/{id},
+  //   update: (action, requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity2/{id},
+  //   doSomething: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity2/do-something
+  // }
+  ```
+
+- Use your resource in your saga
+
+  ```ts
+  import { entity2Resource } from "api/entity2";
+
+  // action here is { type: 'ENTITY2_DO_SOMETHING_INIT' }
+  export function* entity1ReDoSomthingSaga(action) {
+    const res = yield call(
+      [entity2Resource, entity2Resource.doSomething],
+      action
+    );
+    // sends POST http://localhost:3000/entity2/do-something
+    yield put({ type: "ENTITY2_DO_SOMETHING_SUCCESS", payload: res });
+  }
+  // action here is { type: 'ENTITY2_READ_ONE_INIT', meta: { id: '123'} }
+  export function* entity2ReadOneSaga(action) {
+    const res = yield call([entity2Resource, entity2Resource.readOne], action, {
+      params: { id: action.meta.id }
+    });
+    // sends GET http://localhost:3000/entity2/123
+    yield put({ type: "ENTITY2_READ_ONE_SUCCESS", payload: res });
+  }
+  ```
+
+You custom schema does not need to extend default schema if you do not want that
+
+```ts
+// api/entity.js
+import { resourceBuilder } from "utils/resource";
+
+export const entityResource = resourceBuilder.build<"doSomething">({
+  schema: {
+    doSomething: {
+      method: "post",
+      url: "/do-something"
+    }
+  },
+  url: "/entity"
+});
+// exports an object
+// {
+//   doSomething: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity/do-something
+// }
+```
+
+Alternatively you can use a partial of a default schema
+
+```ts
+// api/entity.js
+import { resourceSchemaDefault } from "axios-rest-resource";
+import { resourceBuilder } from "utils/resource";
+
+const { read, readOne } = resourceSchemaDefault;
+
+export const entityResource = resourceBuilder.build<"read" | "readOne">({
+  schema: {
+    read,
+    readOne
+  },
+  url: "/entity"
+});
+// exports an object
+// {
+//   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity,
+//   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity/{id},
+// }
+```
+
 ## Adavanced usage
 
 You can pass a custom axios instance factory to ResourceBuilder. It's useful if you want to do something more with your axios instance but assign 'baseURL' and add request inerceptors.
@@ -165,13 +281,18 @@ import { ResourceBuilder } from "axios-rest-resource";
 import axios, { AxiosInstance } from "axios";
 
 const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
-  const axiosInstance = axios.create({ baseURL: "http://localshot:3000" });
+  const axiosInstance = axios.create({
+    // Don't forget to append resourceUrl to baseURL
+    baseURL: `http://localshot:3000${resourceUrl}`,
+    // It might be a good idea to tell your server what data you expect in return
+    headers: {
+      Accept: "application/json"
+    }
+  });
   // This time we want to add response interceptors
   axiosInstance.interceptors.response.use(myResponeInterceptor);
   // Don't forget to add interceptorUrlFormatter if you want to keep {token} replacement in urls
   axiosInstance.interceptors.request.use(interceptorUrlFormatter);
-  // Don't forget to append resourceUrl to baseURL
-  axiosInstance.defaults.baseURL += resourceUrl;
   return axiosInstance;
 };
 
