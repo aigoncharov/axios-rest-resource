@@ -59,13 +59,13 @@ npm i axios-rest-resource axios
 
   // action here is { type: 'ENTITY1_READ_INIT' }
   export function* entity1ReadSaga(action) {
-    const res = yield call([entity1Resource, entity1Resource.read], action);
+    const res = yield call(entity1Resource.read, action);
     // sends GET http://localhost:3000/entity1
     yield put({ type: "ENTITY1_READ_SUCCESS", payload: res });
   }
   // action here is { type: 'ENTITY1_READ_ONE_INIT', meta: { id: '123'} }
   export function* entity1ReadOneSaga(action) {
-    const res = yield call([entity1Resource, entity1Resource.readOne], action, {
+    const res = yield call(entity1Resource.readOne, action, {
       params: { id: action.meta.id }
     });
     // sends GET http://localhost:3000/entity1/123
@@ -211,16 +211,13 @@ export const resourceBuilder = new ResourceBuilder({
 
   // action here is { type: 'ENTITY2_DO_SOMETHING_INIT' }
   export function* entity1ReDoSomthingSaga(action) {
-    const res = yield call(
-      [entity2Resource, entity2Resource.doSomething],
-      action
-    );
+    const res = yield call(entity2Resource.doSomething, action);
     // sends POST http://localhost:3000/entity2/do-something
     yield put({ type: "ENTITY2_DO_SOMETHING_SUCCESS", payload: res });
   }
   // action here is { type: 'ENTITY2_READ_ONE_INIT', meta: { id: '123'} }
   export function* entity2ReadOneSaga(action) {
-    const res = yield call([entity2Resource, entity2Resource.readOne], action, {
+    const res = yield call(entity2Resource.readOne, action, {
       params: { id: action.meta.id }
     });
     // sends GET http://localhost:3000/entity2/123
