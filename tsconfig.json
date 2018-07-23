@@ -5,7 +5,6 @@
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "outDir": "./dist",
-    "sourceMap": true,
     "target": "es2015",
     "baseUrl": "./",
     "moduleResolution": "node",
