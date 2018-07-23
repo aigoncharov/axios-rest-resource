@@ -65,7 +65,11 @@ interface IActionMetaAuthorization {
  */
 const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAuthorization => {
   const actionTyped = action as IActionMetaAuthorization
-  return !!(actionTyped.meta && actionTyped.meta.authorization)
+  try {
+    return !!(actionTyped.meta && actionTyped.meta.authorization)
+  } catch (e) {
+    return false
+  }
 }
 /**
  * @description
