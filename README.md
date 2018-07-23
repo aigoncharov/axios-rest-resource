@@ -12,6 +12,7 @@ A small library that creates a pre-configured instance of axios to make HTTP req
   - [Creating custom interceptors](#creating-custom-interceptors)
 - [Custom resource schema](#custom-resource-schema)
 - [Adavanced usage](#adavanced-usage)
+- [Usage with redux-thunk](#usage-with-redux-thunk)
 - [API](#api)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -113,7 +114,7 @@ export const resourceBuilder = new ResourceBuilder({
 
 ### Creating custom interceptors
 
-Here's how you can create an interceptor that logs all requests adn apply it:
+Here's how you can create an interceptor that logs all requests and apply it:
 
 ```ts
 import { ResourceBuilder } from "axios-rest-resource";
@@ -318,6 +319,70 @@ const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
 
 export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
 ```
+
+## Usage with redux-thunk
+
+As you noticed examples above are redux-saga centric. That's because this library was built with redux-saga in mind, but that doesn't make it unusable with redu-thunk. The only parameter enforced in any action is 'payload', which maskes it usable with thunks like this:
+
+- Create resource module in your utils folder
+
+  ```ts
+  // utils/resource.ts
+  import { ResourceBuilder } from "axios-rest-resource";
+
+  export const resourceBuilder = new ResourceBuilder({
+    baseURL: "http://localhost:3000"
+  });
+  ```
+
+- Using a newly created resource builder create an actual resource
+
+  ```ts
+  // api/entity1.js
+  import { resourceBuilder } from "utils/resource";
+
+  export const entity1Resource = resourceBuilder.build({ url: "/entity1" });
+  // exports an object
+  // {
+  //   create: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
+  //   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1,
+  //   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1/{id},
+  //   remove: (action, requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity1/{id},
+  //   update: (action, requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity1/{id}
+  // }
+  ```
+
+- Use your resource in your thunk
+
+  ```ts
+  import { entity1Resource } from "api/entity1";
+
+  export const entity1ReadThunk = async (dispatch) => {
+    dispatch({
+      type: "ENTITY1_READ_INIT"
+    })
+    const res = await entity1Resource.read()
+    // sends GET http://localhost:3000/entity1
+    dispatch({ type: "ENTITY1_READ_SUCCESS", payload: res });
+  }
+  export const entity1ReadOneThunk = (id) => async (dispatch) => {
+    dispatch({
+      type: "ENTITY1_READ_ONE_INIT",
+      meta: { id }
+    })
+    const res = await entity1Resource.readOne(undefined, { params: { id } })
+    // sends GET http://localhost:3000/entity1/{id}
+    yield put({ type: "ENTITY1_READ_ONE_SUCCESS", payload: res, { meta: { id } } });
+  }
+  export const entity1CreateThunk = (payload) => async (dispatch) => {
+    dispatch({
+      type: "ENTITY1_CREATE_INIT"
+    })
+    const res = await entity1Resource.create({ payload })
+    // sends POST http://localhost:3000/entity1 with body = payload
+    dispatch({ type: "ENTITY1_CREATE_SUCCESS", payload: res });
+  }
+  ```
 
 ## API
 

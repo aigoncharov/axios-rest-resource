@@ -9,7 +9,6 @@
 ### Interfaces
 
 - [IAPIMethodSchema](interfaces/iapimethodschema.md)
-- [IActionMeta](interfaces/iactionmeta.md)
 - [IActionMetaAuthorization](interfaces/iactionmetaauthorization.md)
 - [IAxiosResourceRequestConfig](interfaces/iaxiosresourcerequestconfig.md)
 - [IAxiosResourceRequestConfigExtraData](interfaces/iaxiosresourcerequestconfigextradata.md)
@@ -53,14 +52,14 @@
 
 #### Type declaration
 
-▸(action: _[IActionMeta](interfaces/iactionmeta.md)<`any`, `any`>_, requestConfig?: _`Partial`<`AxiosRequestConfig`>_): `AxiosPromise`
+▸(action?: _ `undefined` &#124; `object`_, requestConfig?: _`Partial`<`AxiosRequestConfig`>_): `AxiosPromise`
 
 **Parameters:**
 
-| Param                    | Type                                                   |
-| ------------------------ | ------------------------------------------------------ |
-| action                   | [IActionMeta](interfaces/iactionmeta.md)<`any`, `any`> |
-| `Optional` requestConfig | `Partial`<`AxiosRequestConfig`>                        |
+| Param                    | Type                            |
+| ------------------------ | ------------------------------- |
+| `Optional` action        | `undefined` &#124; `object`     |
+| `Optional` requestConfig | `Partial`<`AxiosRequestConfig`> |
 
 **Returns:** `AxiosPromise`
 

@@ -1,6 +1,6 @@
 {
   "name": "axios-rest-resource",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A small library that creates a pre-configured instance of axios to make HTTP requests to REST resources. Written in Typescript. Heavily inspired by AngularJS' $resource",
   "keywords": [
     "axios",

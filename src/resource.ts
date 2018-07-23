@@ -8,13 +8,7 @@ import {
   ICreateAxiosInstanceFromUrl
 } from './axios'
 
-export interface IActionMeta<Payload, Meta> {
-  payload?: Payload,
-  meta?: Meta,
-  type: string
-}
-
-export type IAPIMethod = (action: IActionMeta<any, any>, requestConfig?: Partial<AxiosRequestConfig>) => AxiosPromise
+export type IAPIMethod = (action?: { payload?: unknown }, requestConfig?: Partial<AxiosRequestConfig>) => AxiosPromise
 
 export interface IResource {
   [ index: string ]: IAPIMethod
@@ -108,7 +102,7 @@ export class ResourceBuilder {
    * Creates an axios instance using a function passed (created) into ResourceBuilder constructor and
    * a url passed into this method.
    * Returns an object which has the same properties as a schema you provided (or default schema).
-   * Each one of this properties is a function which accepts an action and an optional request config,
+   * Each one of this properties is a function which accepts an optional action and an optional request config,
    * makes a request using the axios instance created earlier and returns a Promise of this request.
    * action.payload is used as 'data' of the request. Method and optional url from the schema are used
    * as 'method' and 'url' accordingly. You can pass any additional properties with the optional request config.
@@ -212,7 +206,7 @@ export class ResourceBuilder {
     const resource = {} as IBuildParamsExtendedRes<ResourceMethods> & IResource
     for (const methodName of Object.keys(schema)) {
       const methodSchema = schema[methodName]
-      resource[methodName] = (action, requestConfig = {}) => axiosInstance.request({
+      resource[methodName] = (action = {}, requestConfig = {}) => axiosInstance.request({
         ...requestConfig,
         ...methodSchema,
         data: action.payload,

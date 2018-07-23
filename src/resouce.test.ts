@@ -9,7 +9,6 @@ import {
   IAxiosResourceRequestConfig
 } from './axios'
 import {
-  IActionMeta,
   IAPIMethodSchema,
   IBuildParams,
   IBuildParamsExtended,
@@ -40,7 +39,7 @@ describe('resource', () => {
     const resourceBuilderValidate = async (
       resourceBuilder: ResourceBuilder,
       resourceBuilderParams: IBuildParams | IBuildParamsExtended<string>,
-      resourceMethodParams: [ IActionMeta<any, any>, AxiosRequestConfig? ]
+      resourceMethodParams: [ { payload: unknown }?, AxiosRequestConfig? ]
     ) => {
       moxios.stubRequest(/.*/, {
         responseText: 'OK',
@@ -63,10 +62,11 @@ describe('resource', () => {
         expect(typeof requestConfigRes).to.be.equal('object')
         expect(requestConfigRes).to.have.property('method', methodSchema.method.toLowerCase())
         const [ action, requestConfig ] = resourceMethodParams
-        expect(requestConfigRes).to.have.property('data', action.payload)
+        expect(requestConfigRes).to.have.property('data', action ? action.payload : undefined)
         expect(requestConfigRes[AxiosResourceAdditionalProps]).not.to.be.equal(undefined)
         expect(typeof requestConfigRes[AxiosResourceAdditionalProps]).to.be.equal('object')
-        expect(requestConfigRes[AxiosResourceAdditionalProps]).to.have.property('action', action)
+        expect(requestConfigRes[AxiosResourceAdditionalProps]).to.have.property('action')
+        expect(requestConfigRes[AxiosResourceAdditionalProps].action).to.be.deep.equal(action || {})
         if (requestConfig) {
           for (const requestConfigKey of Object.keys(requestConfig)) {
             if (ignoreRequestConfigKeys.indexOf(requestConfigKey as keyof IAxiosResourceRequestConfig) !== -1) {
@@ -100,6 +100,18 @@ describe('resource', () => {
           resourceBuilder,
           { url: resourceURL },
           [ action ]
+        )
+        expect(schemaRes).to.be.equal(resourceSchemaDefault)
+      })
+
+      it('success: no action', async () => {
+        const baseURL = 'http://localhost:3000'
+        const resourceURL = '/resource'
+        const resourceBuilder = new ResourceBuilder({ baseURL })
+        const schemaRes = await resourceBuilderValidate(
+          resourceBuilder,
+          { url: resourceURL },
+          []
         )
         expect(schemaRes).to.be.equal(resourceSchemaDefault)
       })
