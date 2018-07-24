@@ -4,9 +4,7 @@ import * as moxios from 'moxios'
 import { createSandbox, SinonSandbox } from 'sinon'
 
 import {
-  AxiosResourceAdditionalProps,
-  createAxiosResourceFactory,
-  IAxiosResourceRequestConfig
+  createAxiosResourceFactory
 } from './axios'
 import {
   IAPIMethodSchema,
@@ -30,16 +28,14 @@ describe('resource', () => {
   })
 
   describe(`${ResourceBuilder.constructor.name}`, () => {
-    const ignoreRequestConfigKeys: Array<keyof IAxiosResourceRequestConfig> = [
-      AxiosResourceAdditionalProps,
-      'data',
+    const ignoreRequestConfigKeys: Array<keyof AxiosRequestConfig> = [
       'method',
       'url'
     ]
     const resourceBuilderValidate = async (
       resourceBuilder: ResourceBuilder,
       resourceBuilderParams: IBuildParams | IBuildParamsExtended<string>,
-      resourceMethodParams: [ { payload: unknown }?, AxiosRequestConfig? ]
+      resourceMethodConfig?: AxiosRequestConfig
     ) => {
       moxios.stubRequest(/.*/, {
         responseText: 'OK',
@@ -55,33 +51,27 @@ describe('resource', () => {
         expect(resource).to.have.property(schemaKey)
         const resourceMethod = resource[schemaKey as keyof IResourceDefault]
         expect(typeof resourceMethod).be.equal('function')
-        const axiosPromise = resourceMethod(...resourceMethodParams)
+        const axiosPromise = resourceMethod(resourceMethodConfig)
         expect(axiosPromise instanceof Promise).to.be.equal(true)
         await axiosPromise
-        const requestConfigRes = moxios.requests.mostRecent().config as IAxiosResourceRequestConfig
+        const requestConfigRes = moxios.requests.mostRecent().config
         expect(typeof requestConfigRes).to.be.equal('object')
         expect(requestConfigRes).to.have.property('method', methodSchema.method.toLowerCase())
-        const [ action, requestConfig ] = resourceMethodParams
-        expect(requestConfigRes).to.have.property('data', action ? action.payload : undefined)
-        expect(requestConfigRes[AxiosResourceAdditionalProps]).not.to.be.equal(undefined)
-        expect(typeof requestConfigRes[AxiosResourceAdditionalProps]).to.be.equal('object')
-        expect(requestConfigRes[AxiosResourceAdditionalProps]).to.have.property('action')
-        expect(requestConfigRes[AxiosResourceAdditionalProps].action).to.be.deep.equal(action || {})
-        if (requestConfig) {
-          for (const requestConfigKey of Object.keys(requestConfig)) {
-            if (ignoreRequestConfigKeys.indexOf(requestConfigKey as keyof IAxiosResourceRequestConfig) !== -1) {
+        if (resourceMethodConfig) {
+          for (const requestConfigKey of Object.keys(resourceMethodConfig)) {
+            if (ignoreRequestConfigKeys.indexOf(requestConfigKey as keyof AxiosRequestConfig) !== -1) {
               continue
             }
-            const requestConfigVal = requestConfig[requestConfigKey as keyof AxiosRequestConfig]
+            const requestConfigVal = resourceMethodConfig[requestConfigKey as keyof AxiosRequestConfig]
             if (requestConfigKey === 'headers') {
               // requestConfigVal = headers object
               for (const headersKey of Object.keys(requestConfigVal)) {
                 const headersVal = requestConfigVal[headersKey]
                 expect(requestConfigRes[requestConfigKey]).to.have.property(headersKey, headersVal)
               }
-            } else {
-              expect(requestConfigRes).to.have.property(requestConfigKey, requestConfigVal)
+              continue
             }
+            expect(requestConfigRes).to.have.property(requestConfigKey, requestConfigVal)
           }
         }
       }
@@ -91,27 +81,25 @@ describe('resource', () => {
       it('success: default schema', async () => {
         const baseURL = 'http://localhost:3000'
         const resourceURL = '/resource'
-        const action = {
-          payload: 'test',
-          type: 'ACTION'
+        const requestConfig = {
+          data: 'test'
         }
         const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
           resourceBuilder,
           { url: resourceURL },
-          [ action ]
+          requestConfig
         )
         expect(schemaRes).to.be.equal(resourceSchemaDefault)
       })
 
-      it('success: no action', async () => {
+      it('success: no request config', async () => {
         const baseURL = 'http://localhost:3000'
         const resourceURL = '/resource'
         const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
           resourceBuilder,
-          { url: resourceURL },
-          []
+          { url: resourceURL }
         )
         expect(schemaRes).to.be.equal(resourceSchemaDefault)
       })
@@ -119,16 +107,15 @@ describe('resource', () => {
       it('success: accepts ICreateAxiosInstanceFromUrl', async () => {
         const baseURL = 'http://localhost:3000'
         const resourceURL = '/resource'
-        const action = {
-          payload: 'test',
-          type: 'ACTION'
+        const requestConfig = {
+          data: 'test'
         }
         const createAxiosResource = createAxiosResourceFactory({ baseURL })
         const resourceBuilder = new ResourceBuilder(createAxiosResource)
         const schemaRes = await resourceBuilderValidate(
           resourceBuilder,
           { url: resourceURL },
-          [ action ]
+          requestConfig
         )
         expect(schemaRes).to.be.equal(resourceSchemaDefault)
       })
@@ -136,9 +123,8 @@ describe('resource', () => {
       it('success: custom schema', async () => {
         const baseURL = 'http://localhost:3000'
         const resourceURL = '/resource'
-        const action = {
-          payload: 'test',
-          type: 'ACTION'
+        const requestConfig = {
+          data: 'test'
         }
         const schema: { [ index: string ]: IAPIMethodSchema } = {
           test: {
@@ -149,7 +135,7 @@ describe('resource', () => {
         const schemaRes = await resourceBuilderValidate(
           resourceBuilder,
           { url: resourceURL, schema },
-          [ action ]
+          requestConfig
         )
         expect(schemaRes).to.be.equal(schema)
       })
@@ -157,25 +143,22 @@ describe('resource', () => {
       it('success: custom request params', async () => {
         const baseURL = 'http://localhost:3000'
         const resourceURL = '/resource'
-        const action = {
-          payload: 'test',
-          type: 'ACTION'
-        }
         const schema: { [ index: string ]: IAPIMethodSchema } = {
           test: {
             method: 'PUT'
           }
         }
-        const requestParams: AxiosRequestConfig = {
+        const requestConfig = {
           headers: {
             test: 'test'
-          }
+          },
+          payload: 'test'
         }
         const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
           resourceBuilder,
           { url: resourceURL, schema },
-          [ action, requestParams ]
+          requestConfig
         )
         expect(schemaRes).to.be.equal(schema)
       })
@@ -183,29 +166,24 @@ describe('resource', () => {
       it('success: custom request params with ignored keys', async () => {
         const baseURL = 'http://localhost:3000'
         const resourceURL = '/resource'
-        const action = {
-          payload: 'test',
-          type: 'ACTION'
-        }
         const schema: { [ index: string ]: IAPIMethodSchema } = {
           test: {
             method: 'PUT'
           }
         }
-        const requestParams: IAxiosResourceRequestConfig = {
-          data: 'should not be overridden',
+        const requestConfig = {
+          data: 'test',
           headers: {
             test: 'test'
           },
           method: 'should not be overridden',
-          url: 'should not be overridden',
-          [AxiosResourceAdditionalProps]: 'should not be overridden' as any
+          url: 'should not be overridden'
         }
         const resourceBuilder = new ResourceBuilder({ baseURL })
         const schemaRes = await resourceBuilderValidate(
           resourceBuilder,
           { url: resourceURL, schema },
-          [ action, requestParams ]
+          requestConfig
         )
         expect(schemaRes).to.be.equal(schema)
       })

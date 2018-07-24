@@ -1,13 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
-export const AxiosResourceAdditionalProps = 'axios-rest-resource/AxiosResourceAdditionalProps'
-export interface IAxiosResourceRequestConfigExtraData {
-  action: unknown
-}
-export interface IAxiosResourceRequestConfig extends AxiosRequestConfig {
-  [AxiosResourceAdditionalProps]: IAxiosResourceRequestConfigExtraData
-}
-
 /**
  * @description
  * Axios interceptor. Finds tokens inside of {} in config.url, matches them by keys of config.params,
@@ -55,79 +47,17 @@ export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosReques
   return config
 }
 
-interface IActionMetaAuthorization {
-  meta: {
-    authorization: string
-  }
-}
-/**
- * @hidden
- */
-const actionHasMetaAuthorization = (action: unknown): action is IActionMetaAuthorization => {
-  const actionTyped = action as IActionMetaAuthorization
-  try {
-    return !!(actionTyped.meta && actionTyped.meta.authorization)
-  } catch (e) {
-    return false
-  }
-}
-/**
- * @description
- * Axios resource interceptor. Requires config to be IAxiosResourceRequestConfig.
- * Finds action inside of config by AxiosResourceAdditionalProps, if action.meta has authorization,
- * adds Authorization header = action.meta.authorization. Useful for JWT tokens.
- *
- * @example
- * ```js
- * const axiosInstance = axios.create()
- * axiosInstance.interceptors.request.use(interceptorAuthorizationToken)
- * axiosInstance.request({
- *   url: '/',
- *   baseURL: 'http://localhost:3000/resource',
- *   method: 'POST',
- *   [AxiosResourceAdditionalProps]: {
- *     action: { meta: 'testToken', type: 'ACTION' }
- *   }
- * })
- * // interceptorAuthorizationToken processes config before making an ajax request. Processed config:
- * // {
- * //   url: '/',
- * //   baseURL: 'http://localhost:3000/resource',
- * //   method: 'POST',
- * //   headers: {
- * //     Authorization: 'testToken'
- * //   }
- * // }
- * ```
- */
-export const interceptorAuthorizationToken = (config: AxiosRequestConfig) => {
-  const configExtended = config as IAxiosResourceRequestConfig
-  const action = configExtended[AxiosResourceAdditionalProps].action
-  if (actionHasMetaAuthorization(action)) {
-    if (!config.headers) {
-      config.headers = {}
-    }
-    configExtended.headers.Authorization = action.meta.authorization
-  }
-  return configExtended
-}
-
-export type IAxiosResourceInterceptor =
-(config: AxiosRequestConfig) => Promise<AxiosRequestConfig> | AxiosRequestConfig
 export interface ICreateAxiosInstanceFactoryParams extends AxiosRequestConfig {
-  baseURL: string,
-  interceptors?: IAxiosResourceInterceptor[]
+  baseURL: string
 }
 export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
 /**
  * @description
- * Factory that accepts default axios request config and an optional array of request interceptors,
+ * Factory that accepts default axios request config,
  * returns a function that accepts a resource url and returns a configured axios instance.
  * That instance have resourceUrl appended to baseURL and 'Accept' header set to 'application/json'.
  * Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter
- * If you pass no interceptors only default interceptorUrlFormatteris applied.
- * Interceptors you provided are applied with respect to the order in reverse.
- * Default interceptorUrlFormatter is always applied first.
+ * If you pass any headers in your config it merges default 'Accept' header with what you pass in.
  *
  * @example
  * ```js
@@ -142,8 +72,8 @@ export type ICreateAxiosInstanceFromUrl = (resourceUrl: string) => AxiosInstance
  */
 export const createAxiosResourceFactory = (
   {
-    interceptors = [],
     baseURL,
+    headers = {},
     ...config
   }: ICreateAxiosInstanceFactoryParams
 ): ICreateAxiosInstanceFromUrl =>
@@ -151,13 +81,11 @@ export const createAxiosResourceFactory = (
   const axiosInstance = axios.create({
     baseURL: `${baseURL}${resourceUrl}`,
     headers: {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      ...headers
     },
     ...config
   })
-  for (const interceptor of interceptors) {
-    axiosInstance.interceptors.request.use(interceptor)
-  }
   axiosInstance.interceptors.request.use(interceptorUrlFormatter)
   return axiosInstance
 }

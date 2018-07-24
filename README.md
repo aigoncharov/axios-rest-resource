@@ -7,12 +7,9 @@ A small library that creates a pre-configured instance of axios to make HTTP req
 
 - [Installation](#installation)
 - [Quick start](#quick-start)
-- [Request interceptors](#request-interceptors)
-  - [Default interceptors](#default-interceptors)
-  - [Creating custom interceptors](#creating-custom-interceptors)
+- [URL token substituion](#url-token-substituion)
 - [Custom resource schema](#custom-resource-schema)
 - [Adavanced usage](#adavanced-usage)
-- [Usage with redux-thunk](#usage-with-redux-thunk)
 - [API](#api)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -45,119 +42,47 @@ npm i axios-rest-resource axios
   export const entity1Resource = resourceBuilder.build({ url: "/entity1" });
   // exports an object
   // {
-  //   create: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
-  //   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1,
-  //   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1/{id},
-  //   remove: (action, requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity1/{id},
-  //   update: (action, requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity1/{id}
+  //   create: (requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
+  //   read: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1,
+  //   readOne: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1/{id},
+  //   remove: (requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity1/{id},
+  //   update: (requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity1/{id}
   // }
   ```
 
-- Use your resource in your saga
+- Use your resource whenever you want to make an AJAX call
 
   ```ts
   import { entity1Resource } from "api/entity1";
 
-  // action here is { type: 'ENTITY1_READ_INIT' }
-  export function* entity1ReadSaga(action) {
-    const res = yield call(entity1Resource.read, action);
-    // sends GET http://localhost:3000/entity1
-    yield put({ type: "ENTITY1_READ_SUCCESS", payload: res });
-  }
-  // action here is { type: 'ENTITY1_READ_ONE_INIT', meta: { id: '123'} }
-  export function* entity1ReadOneSaga(action) {
-    const res = yield call(entity1Resource.readOne, action, {
-      params: { id: action.meta.id }
-    });
-    // sends GET http://localhost:3000/entity1/123
-    yield put({ type: "ENTITY1_READ_ONE_SUCCESS", payload: res });
-  }
+  const resRead = entity1Resource.read();
+  // sends GET http://localhost:3000/entity1
+  // resRead is a Promise of data received from the server
+
+  const resReadOne = entity1Resource.readOne({ params: { id } });
+  // for id = '123'
+  // sends GET http://localhost:3000/entity1/123
+  // resReadOne is a Promise of data received from the server
+
+  const resCreate = entity1Resource.create({ data });
+  // for data = { field1: 'test' }
+  // sends POST http://localhost:3000/entity1 with body { field1: 'test' }
+  // resCreate is a Promise of data received from the server
+
+  const resUpdate = entity1Resource.update({ data, params: { id } });
+  // for data = { field1: 'test' } and id = '123'
+  // sends PUT http://localhost:3000/entity1/123 with body { field1: 'test' }
+  // resUpdate is a Promise of data received from the server
+
+  const resRemove = entity1Resource.remove({ params: { id } });
+  // for id = '123'
+  // sends DELETE http://localhost:3000/entity1/123
+  // resRemove is a Promise of data received from the server
   ```
 
-## Request interceptors
+## URL token substituion
 
-You can pass an optional array of request interceptors to ResourceBuilder's constructor
-
-```ts
-export const resourceBuilder = new ResourceBuilder({
-  baseURL: "http://localhost:3000",
-  interceptors: [myRequestInterceptor]
-});
-```
-
-You can read more about interceptors [here](https://github.com/axios/axios#interceptors). The only difference with axios' original interceptors is that axios-rest-resource passes an extended version of [AxiosRequestConfig](https://github.com/axios/axios#request-config) to its interceptors. It has an additional property [AxiosResourceAdditionalProps](docs/api/README.md#axiosresourceadditionalprops). You can read more about it [here](docs/interfaces/iaxiosresourcerequestconfig.md). It contains an object with an action that triggerred that request. Most of the time you do not need to worry about it unless you want to access that action's data.
-
-### Default interceptors
-
-Axios-recource exposes two pre-defined interceptors:
-
-- [interceptorUrlFormatter](docs/api/README.md#interceptorurlformatter)
-  Handles {token} subsitution in urls
-- [interceptorAuthorizationToken](docs/api/README.md#interceptorauthorizationtoken)
-  Adds Authorization header
-
-interceptorUrlFormatter is always applied. interceptorAuthorizationToken you have to apply manually if you want to.
-
-You can do it like this:
-
-```ts
-import {
-  ResourceBuilder,
-  interceptorAuthorizationToken
-} from "axios-rest-resource";
-
-export const resourceBuilder = new ResourceBuilder({
-  baseURL: "http://localhost:3000",
-  interceptors: [interceptorAuthorizationToken]
-});
-```
-
-### Creating custom interceptors
-
-Here's how you can create an interceptor that logs all requests and apply it:
-
-```ts
-import { ResourceBuilder } from "axios-rest-resource";
-import { AxiosRequestConfig } from "axios";
-
-const interceptorLog = (config: AxiosRequestConfig) => {
-  console.log(
-    `axios-rest-resource.interceptorLog -> request ${JSON.stringify(config)}`
-  );
-  return config;
-};
-
-export const resourceBuilder = new ResourceBuilder({
-  baseURL: "http://localhost:3000",
-  interceptors: [interceptorAuthorizationToken]
-});
-```
-
-If you want to access that additional property [AxiosResourceAdditionalProps](docs/api/README.md#axiosresourceadditionalprops), you can do this:
-
-```ts
-import {
-  ResourceBuilder,
-  IAxiosResourceRequestConfig,
-  AxiosResourceAdditionalProps
-} from "axios-rest-resource";
-import { AxiosRequestConfig } from "axios";
-
-const interceptorLogAction = (config: AxiosRequestConfig) => {
-  const configExtended = config as IAxiosResourceRequestConfig;
-  console.log(
-    `axios-rest-resource.interceptorLogAction -> action ${JSON.stringify(
-      configExtended[AxiosResourceAdditionalProps].action
-    )}`
-  );
-  return configExtended;
-};
-
-export const resourceBuilder = new ResourceBuilder({
-  baseURL: "http://localhost:3000",
-  interceptors: [interceptorAuthorizationToken, interceptorLogAction]
-});
-```
+axios-rest-resource applies [interceptorUrlFormatter](docs/api/README.md#interceptorurlformatter) interceptor by default. It handles {token} substituin in URLs.
 
 ## Custom resource schema
 
@@ -196,34 +121,47 @@ export const resourceBuilder = new ResourceBuilder({
   });
   // exports an object
   // {
-  //   create: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity2,
-  //   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity2,
-  //   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity2/{id},
-  //   remove: (action, requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity2/{id},
-  //   update: (action, requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity2/{id},
-  //   doSomething: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity2/do-something
+  //   create: (requestConfig) => axiosPromise // sends POST http://localhost:3000/entity2,
+  //   read: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity2,
+  //   readOne: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity2/{id},
+  //   remove: (requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity2/{id},
+  //   update: (requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity2/{id},
+  //   doSomething: (requestConfig) => axiosPromise // sends POST http://localhost:3000/entity2/do-something
   // }
   ```
 
-- Use your resource in your saga
+- Use your resource whenever you want to make an AJAX call
 
   ```ts
   import { entity2Resource } from "api/entity2";
 
-  // action here is { type: 'ENTITY2_DO_SOMETHING_INIT' }
-  export function* entity1ReDoSomthingSaga(action) {
-    const res = yield call(entity2Resource.doSomething, action);
-    // sends POST http://localhost:3000/entity2/do-something
-    yield put({ type: "ENTITY2_DO_SOMETHING_SUCCESS", payload: res });
-  }
-  // action here is { type: 'ENTITY2_READ_ONE_INIT', meta: { id: '123'} }
-  export function* entity2ReadOneSaga(action) {
-    const res = yield call(entity2Resource.readOne, action, {
-      params: { id: action.meta.id }
-    });
-    // sends GET http://localhost:3000/entity2/123
-    yield put({ type: "ENTITY2_READ_ONE_SUCCESS", payload: res });
-  }
+  const resRead = entity2Resource.read();
+  // sends GET http://localhost:3000/entity2
+  // resRead is a Promise of data received from the server
+
+  const resReadOne = entity2Resource.readOne({ params: { id } });
+  // for id = '123'
+  // sends GET http://localhost:3000/entity2/123
+  // resReadOne is a Promise of data received from the server
+
+  const resCreate = entity2Resource.create({ data });
+  // for data = { field1: 'test' }
+  // sends POST http://localhost:3000/entity2 with body { field1: 'test' }
+  // resCreate is a Promise of data received from the server
+
+  const resUpdate = entity2Resource.update({ data, params: { id } });
+  // for data = { field1: 'test' } and id = '123'
+  // sends PUT http://localhost:3000/entity2/123 with body { field1: 'test' }
+  // resUpdate is a Promise of data received from the server
+
+  const resRemove = entity2Resource.remove({ params: { id } });
+  // for id = '123'
+  // sends DELETE http://localhost:3000/entity2/123
+  // resRemove is a Promise of data received from the server
+
+  const resDoSomething = entity2Resource.doSomething();
+  // sends POST http://localhost:3000/entity2/do-something
+  // resDoSomething is a Promise of data received from the server
   ```
 
 You custom schema does not need to extend default schema if you do not want that
@@ -243,7 +181,7 @@ export const entityResource = resourceBuilder.build<"doSomething">({
 });
 // exports an object
 // {
-//   doSomething: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity/do-something
+//   doSomething: (requestConfig) => axiosPromise // sends POST http://localhost:3000/entity/do-something
 // }
 ```
 
@@ -265,14 +203,14 @@ export const entityResource = resourceBuilder.build<"read" | "readOne">({
 });
 // exports an object
 // {
-//   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity,
-//   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity/{id},
+//   read: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity,
+//   readOne: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity/{id},
 // }
 ```
 
 ## Adavanced usage
 
-You can pass a custom axios instance factory to ResourceBuilder. It's useful if you want to do something more with your axios instance but assign 'baseURL' and add request inerceptors.
+You can pass a custom axios instance factory to ResourceBuilder. It's useful if you want to do something more with your axios instance like add an interceptor.
 
 ```ts
 import { ResourceBuilder } from "axios-rest-resource";
@@ -319,70 +257,6 @@ const createAxiosInstanceFromUrl = (resourceUrl: string): AxiosInstance => {
 
 export const resourceBuilder = new ResourceBuilder(createAxiosInstanceFromUrl);
 ```
-
-## Usage with redux-thunk
-
-As you noticed examples above are redux-saga centric. That's because this library was built with redux-saga in mind, but that doesn't make it unusable with redu-thunk. The only parameter enforced in any action is 'payload', which maskes it usable with thunks like this:
-
-- Create resource module in your utils folder
-
-  ```ts
-  // utils/resource.ts
-  import { ResourceBuilder } from "axios-rest-resource";
-
-  export const resourceBuilder = new ResourceBuilder({
-    baseURL: "http://localhost:3000"
-  });
-  ```
-
-- Using a newly created resource builder create an actual resource
-
-  ```ts
-  // api/entity1.js
-  import { resourceBuilder } from "utils/resource";
-
-  export const entity1Resource = resourceBuilder.build({ url: "/entity1" });
-  // exports an object
-  // {
-  //   create: (action, requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
-  //   read: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1,
-  //   readOne: (action, requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1/{id},
-  //   remove: (action, requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity1/{id},
-  //   update: (action, requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity1/{id}
-  // }
-  ```
-
-- Use your resource in your thunk
-
-  ```ts
-  import { entity1Resource } from "api/entity1";
-
-  export const entity1ReadThunk = async (dispatch) => {
-    dispatch({
-      type: "ENTITY1_READ_INIT"
-    })
-    const res = await entity1Resource.read()
-    // sends GET http://localhost:3000/entity1
-    dispatch({ type: "ENTITY1_READ_SUCCESS", payload: res });
-  }
-  export const entity1ReadOneThunk = (id) => async (dispatch) => {
-    dispatch({
-      type: "ENTITY1_READ_ONE_INIT",
-      meta: { id }
-    })
-    const res = await entity1Resource.readOne(undefined, { params: { id } })
-    // sends GET http://localhost:3000/entity1/{id}
-    yield put({ type: "ENTITY1_READ_ONE_SUCCESS", payload: res, { meta: { id } } });
-  }
-  export const entity1CreateThunk = (payload) => async (dispatch) => {
-    dispatch({
-      type: "ENTITY1_CREATE_INIT"
-    })
-    const res = await entity1Resource.create({ payload })
-    // sends POST http://localhost:3000/entity1 with body = payload
-    dispatch({ type: "ENTITY1_CREATE_SUCCESS", payload: res });
-  }
-  ```
 
 ## API
 

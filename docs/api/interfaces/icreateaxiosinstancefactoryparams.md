@@ -20,7 +20,6 @@
 - [headers](icreateaxiosinstancefactoryparams.md#headers)
 - [httpAgent](icreateaxiosinstancefactoryparams.md#httpagent)
 - [httpsAgent](icreateaxiosinstancefactoryparams.md#httpsagent)
-- [interceptors](icreateaxiosinstancefactoryparams.md#interceptors)
 - [maxContentLength](icreateaxiosinstancefactoryparams.md#maxcontentlength)
 - [maxRedirects](icreateaxiosinstancefactoryparams.md#maxredirects)
 - [method](icreateaxiosinstancefactoryparams.md#method)
@@ -104,14 +103,6 @@
 ### `<Optional>` httpsAgent
 
 **● httpsAgent**: _`any`_
-
----
-
-<a id="interceptors"></a>
-
-### `<Optional>` interceptors
-
-**● interceptors**: _[IAxiosResourceInterceptor](../#iaxiosresourceinterceptor)[]_
 
 ---
 

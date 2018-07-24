@@ -9,9 +9,6 @@
 ### Interfaces
 
 - [IAPIMethodSchema](interfaces/iapimethodschema.md)
-- [IActionMetaAuthorization](interfaces/iactionmetaauthorization.md)
-- [IAxiosResourceRequestConfig](interfaces/iaxiosresourcerequestconfig.md)
-- [IAxiosResourceRequestConfigExtraData](interfaces/iaxiosresourcerequestconfigextradata.md)
 - [IBuildParams](interfaces/ibuildparams.md)
 - [IBuildParamsExtended](interfaces/ibuildparamsextended.md)
 - [ICreateAxiosInstanceFactoryParams](interfaces/icreateaxiosinstancefactoryparams.md)
@@ -21,19 +18,13 @@
 ### Type aliases
 
 - [IAPIMethod](#iapimethod)
-- [IAxiosResourceInterceptor](#iaxiosresourceinterceptor)
 - [IBuildParamsExtendedRes](#ibuildparamsextendedres)
 - [ICreateAxiosInstanceFromUrl](#icreateaxiosinstancefromurl)
 - [IResourceSchemaKeysDefault](#iresourceschemakeysdefault)
 
-### Variables
-
-- [AxiosResourceAdditionalProps](#axiosresourceadditionalprops)
-
 ### Functions
 
 - [createAxiosResourceFactory](#createaxiosresourcefactory)
-- [interceptorAuthorizationToken](#interceptorauthorizationtoken)
 - [interceptorUrlFormatter](#interceptorurlformatter)
 
 ### Object literals
@@ -52,36 +43,15 @@
 
 #### Type declaration
 
-▸(action?: _ `undefined` &#124; `object`_, requestConfig?: _`Partial`<`AxiosRequestConfig`>_): `AxiosPromise`
+▸(requestConfig?: _`Partial`<`AxiosRequestConfig`>_): `AxiosPromise`
 
 **Parameters:**
 
 | Param                    | Type                            |
 | ------------------------ | ------------------------------- |
-| `Optional` action        | `undefined` &#124; `object`     |
 | `Optional` requestConfig | `Partial`<`AxiosRequestConfig`> |
 
 **Returns:** `AxiosPromise`
-
----
-
-<a id="iaxiosresourceinterceptor"></a>
-
-### IAxiosResourceInterceptor
-
-**ΤIAxiosResourceInterceptor**: _`function`_
-
-#### Type declaration
-
-▸(config: _`AxiosRequestConfig`_): `Promise`<`AxiosRequestConfig`> &#124; `AxiosRequestConfig`
-
-**Parameters:**
-
-| Param  | Type                 |
-| ------ | -------------------- |
-| config | `AxiosRequestConfig` |
-
-**Returns:** `Promise`<`AxiosRequestConfig`> &#124; `AxiosRequestConfig`
 
 ---
 
@@ -124,23 +94,13 @@ _
 
 ---
 
-## Variables
-
-<a id="axiosresourceadditionalprops"></a>
-
-### `<Const>` AxiosResourceAdditionalProps
-
-**● AxiosResourceAdditionalProps**: _"axios-rest-resource/AxiosResourceAdditionalProps"_ = "axios-rest-resource/AxiosResourceAdditionalProps"
-
----
-
 ## Functions
 
 <a id="createaxiosresourcefactory"></a>
 
 ### `<Const>` createAxiosResourceFactory
 
-_**description**_: Factory that accepts default axios request config and an optional array of request interceptors, returns a function that accepts a resource url and returns a configured axios instance. That instance have resourceUrl appended to baseURL and 'Accept' header set to 'application/json'. Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter If you pass no interceptors only default interceptorUrlFormatteris applied. Interceptors you provided are applied with respect to the order in reverse. Default interceptorUrlFormatter is always applied first.
+_**description**_: Factory that accepts default axios request config, returns a function that accepts a resource url and returns a configured axios instance. That instance have resourceUrl appended to baseURL and 'Accept' header set to 'application/json'. Always applies default interceptorUrlFormatter to allow token substituion in url. @see interceptorUrlFormatter If you pass any headers in your config it merges default 'Accept' header with what you pass in.
 
 _**example**_:
 
@@ -169,48 +129,6 @@ entity2Resource.request({
 | \_\_namedParameters | `object` |
 
 **Returns:** [ICreateAxiosInstanceFromUrl](#icreateaxiosinstancefromurl)
-
----
-
-<a id="interceptorauthorizationtoken"></a>
-
-### `<Const>` interceptorAuthorizationToken
-
-_**description**_: Axios resource interceptor. Requires config to be IAxiosResourceRequestConfig. Finds action inside of config by AxiosResourceAdditionalProps, if action.meta has authorization, adds Authorization header = action.meta.authorization. Useful for JWT tokens.
-
-_**example**_:
-
-```js
-const axiosInstance = axios.create();
-axiosInstance.interceptors.request.use(interceptorAuthorizationToken);
-axiosInstance.request({
-  url: "/",
-  baseURL: "http://localhost:3000/resource",
-  method: "POST",
-  [AxiosResourceAdditionalProps]: {
-    action: { meta: "testToken", type: "ACTION" }
-  }
-});
-// interceptorAuthorizationToken processes config before making an ajax request. Processed config:
-// {
-//   url: '/',
-//   baseURL: 'http://localhost:3000/resource',
-//   method: 'POST',
-//   headers: {
-//     Authorization: 'testToken'
-//   }
-// }
-```
-
-▸ **interceptorAuthorizationToken**(config: _`AxiosRequestConfig`_): [IAxiosResourceRequestConfig](interfaces/iaxiosresourcerequestconfig.md)
-
-**Parameters:**
-
-| Param  | Type                 |
-| ------ | -------------------- |
-| config | `AxiosRequestConfig` |
-
-**Returns:** [IAxiosResourceRequestConfig](interfaces/iaxiosresourcerequestconfig.md)
 
 ---
 
