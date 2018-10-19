@@ -1,6 +1,6 @@
 # axios-rest-resource [![Build Status](https://travis-ci.org/keenondrums/axios-rest-resource.svg?branch=master)](https://travis-ci.org/keenondrums/axios-rest-resource)
 
-A small library that creates a pre-configured instance of axios to make HTTP requests to REST resources. Written in Typescript. Heavily inspired by AngularJS' $resource.
+Small library that creates a pre-configured instance of axios to make HTTP requests to REST resources. Written in Typescript. Heavily inspired by AngularJS' $resource.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
