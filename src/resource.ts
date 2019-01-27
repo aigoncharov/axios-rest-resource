@@ -1,219 +1,85 @@
-import { AxiosPromise, AxiosRequestConfig } from 'axios'
+import axios, { AxiosInstance, AxiosPromise, AxiosRequestConfig } from 'axios'
 
-import {
-  createAxiosResourceFactory,
-  ICreateAxiosInstanceFactoryParams,
-  ICreateAxiosInstanceFromUrl
-} from './axios'
+import { interceptorUrlFormatter } from './url-formatter'
 
 export type IAPIMethod = (requestConfig?: Partial<AxiosRequestConfig>) => AxiosPromise
-
-export interface IResource {
-  [ index: string ]: IAPIMethod
-}
-
-export interface IResourceDefault {
-  read: IAPIMethod,
-  readOne: IAPIMethod,
-  create: IAPIMethod,
-  update: IAPIMethod,
-  remove: IAPIMethod
-}
-
+export type IResource<Methods extends string> = { [Method in Methods]: IAPIMethod }
+type RequestMethod = 'get' | 'delete' | 'head' | 'options' | 'post' | 'put' | 'patch'
 export interface IAPIMethodSchema {
-  method: string,
+  method: RequestMethod
   url?: string
 }
-
-export type IResourceSchemaKeysDefault = 'create' | 'read' | 'readOne' | 'remove' | 'update'
+export type IResourceSchema<T extends string> = { [Key in T]: IAPIMethodSchema }
+export type IResourceMethodsDefault = 'create' | 'read' | 'readOne' | 'remove' | 'update'
 
 /**
  * @description
  * Default resource schema used by ResourceBuilder.prototype.build
  */
-export const resourceSchemaDefault: { [ Key in IResourceSchemaKeysDefault ]: IAPIMethodSchema } = {
+export const resourceSchemaDefault: IResourceSchema<IResourceMethodsDefault> = {
   create: {
-    method: 'post'
+    method: 'post',
   },
   read: {
-    method: 'get'
+    method: 'get',
   },
   readOne: {
     method: 'get',
-    url: '/{id}'
+    url: '/{id}',
   },
   remove: {
     method: 'delete',
-    url: '/{id}'
+    url: '/{id}',
   },
   update: {
     method: 'put',
-    url: '/{id}'
-  }
+    url: '/{id}',
+  },
 }
 
-export interface IBuildParams {
-  url: string
-}
-export interface IBuildParamsExtended<ResourceMethods extends string> extends IBuildParams {
-  schema: { [ Key in ResourceMethods ]: IAPIMethodSchema }
-}
-export type IBuildParamsExtendedRes<ResourceMethods extends string> = {
-  [ Key in ResourceMethods ]: IAPIMethod
+interface IAxiosConfig extends AxiosRequestConfig {
+  baseURL: string
 }
 
-/**
- * @description
- * Axios resource builder itself.
- *
- * @param createParams
- * Either axios request config or a function that accepts a resource url and returns an axios instance.
- * If you pass axios request config it calls createAxiosResourceFactory under the hood. @see createAxiosResourceFactory
- *
- * @example
- * ```js
- * // utils/resource.js
- * import { ResourceBuilder } from 'axios-rest-resource'
- *
- * export const resourceBuilder = new ResourceBuilder({ baseURL: 'http://localhost:3000' })
- *
- * // use it later to create pre-configured axios instances for every resource
- * ```
- */
 export class ResourceBuilder {
-  protected readonly _schemaDefault = resourceSchemaDefault
-  protected readonly _createAxiosResource: ICreateAxiosInstanceFromUrl
-  constructor (
-    createParams: ICreateAxiosInstanceFromUrl | ICreateAxiosInstanceFactoryParams
-  ) {
-    if (this._isAxiosResourceFactoryParams(createParams)) {
-      this._createAxiosResource = createAxiosResourceFactory(createParams)
-      return
+  public readonly axiosInstance: AxiosInstance
+  protected readonly _schemaDefault: IResourceSchema<IResourceMethodsDefault> = resourceSchemaDefault
+  constructor(axiosConfig: IAxiosConfig) {
+    if (!axiosConfig.headers) {
+      axiosConfig.headers = {}
     }
-    this._createAxiosResource = createParams
+    if (axiosConfig.headers.Accept === undefined) {
+      axiosConfig.headers.Accept = 'application/json'
+    }
+    this.axiosInstance = axios.create(axiosConfig)
+    this.axiosInstance.interceptors.request.use(interceptorUrlFormatter)
   }
 
-  /**
-   * @description
-   * Creates an axios instance using a function passed (created) into ResourceBuilder constructor and
-   * a url passed into this method.
-   * Returns an object which has the same properties as a schema you provided (or default schema).
-   * Each one of this properties is a function which accepts an optional request config,
-   * makes a request using the axios instance created earlier and returns a Promise of this request.
-   * Method and optional url from the schema are used as 'method' and 'url' accordingly.
-   * You can pass any additional properties with the optional request config.
-   * Be aware that the optional request config is applied first.
-   * That means you can not override method and url from schema there.
-   *
-   * @param buildParams
-   * An object wih resource url and optional resource schema.
-   * By default resourceSchemaDefault is used as a schema for the new resource.
-   * @see resourceSchemaDefault
-   *
-   * @example
-   * ```js
-   * // utils/resource.js
-   * import { ResourceBuilder } from 'axios-rest-resource'
-   *
-   * export const resourceBuilder = new ResourceBuilder({ baseURL: 'http://localhost:3000' })
-   *
-   * // api/entity1.js
-   * import { resourceBuilder } from 'utils/resource'
-   *
-   * export const entity1Resource = resourceBuilder.build({ url: '/entity1' })
-   * // uses default schema
-   * // exports an object
-   * // {
-   * //   create: (requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
-   * //   read: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1,
-   * //   readOne: (requestConfig) => axiosPromise // sends GET http://localhost:3000/entity1/{id},
-   * //   remove: (requestConfig) => axiosPromise // sends DELETE http://localhost:3000/entity1/{id},
-   * //   update: (requestConfig) => axiosPromise // sends PUT http://localhost:3000/entity1/{id}
-   * // }
-   *
-   * // whenever you want to make a request
-   * import { entity1Resource } from 'api/entity1'
-   *
-   * const resRead = entity1Resource.read()
-   * // sends GET http://localhost:3000/entity1
-   * // resRead is a Promise of data received from the server
-   *
-   * const resReadOne = entity1Resource.readOne({ params: { id } })
-   * // for id = '123'
-   * // sends GET http://localhost:3000/entity1/123
-   * // resReadOne is a Promise of data received from the server
-   *
-   * const resCreate = entity1Resource.create({ data })
-   * // for data = { field1: 'test' }
-   * // sends POST http://localhost:3000/entity1 with body { field1: 'test' }
-   * // resCreate is a Promise of data received from the server
-   *
-   * // api/entity2.js
-   * import { resourceBuilder } from 'utils/resource'
-   *
-   * export const entity1Resource = resourceBuilder.build<'doSomething1'>({
-   *   url: '/entity1',
-   *   schema: {
-   *     doSomething1: {
-   *       url: '/do-something1',
-   *       method: 'POST'
-   *     }
-   *   }
-   * })
-   * // uses cusom schema
-   * // exports an object
-   * // {
-   * //   doSomething1: (requestConfig) => axiosPromise
-   * //   // sends POST http://localhost:3000/entity1/do-something1
-   * // }
-   *
-   * // whenever you want to make a request
-   * import { entity2Resource } from 'api/entity2'
-   *
-   * const resDoSomething1 = await entity2Resource.doSomething1()
-   * // sends POST http://localhost:3000/entity2/do-something1
-   * // resDoSomething1 is a Promise of data received from the server
-   * ```
-   */
-  public build (
-    buildParams: IBuildParams
-  ): IResourceDefault
-  public build <
-    ResourceMethods extends string
-  > (
-    buildParams: IBuildParamsExtended<ResourceMethods>
-  ): IBuildParamsExtendedRes<ResourceMethods>
-  public build <
-    ResourceMethods extends string
-  > (
-    buildParams: IBuildParams | IBuildParamsExtended<ResourceMethods>
-  ): IResourceDefault | IBuildParamsExtendedRes<ResourceMethods> {
-    const { url } = buildParams
-    let schema: { [ index: string ]: IAPIMethodSchema } = this._schemaDefault
-    if (this._isBuildRapamsExtended(buildParams)) {
-      schema = buildParams.schema
+  public build(resourceUrl: string): IResource<IResourceMethodsDefault>
+  public build<Methods extends string>(resourceUrl: string, schema: IResourceSchema<Methods>): IResource<Methods>
+  public build<Methods extends string>(
+    resourceUrl: string,
+    schema?: IResourceSchema<Methods>,
+  ): IResource<Methods> | IResource<IResourceMethodsDefault> {
+    if (!schema) {
+      return this._build<IResourceMethodsDefault>(resourceUrl, this._schemaDefault)
     }
-    const axiosInstance = this._createAxiosResource(url)
-    const resource = {} as IBuildParamsExtendedRes<ResourceMethods> & IResource
-    for (const methodName of Object.keys(schema)) {
+    return this._build<Methods>(resourceUrl, schema)
+  }
+
+  protected _build<Methods extends string>(resourceUrl: string, schema: IResourceSchema<Methods>): IResource<Methods> {
+    const resource = {} as IResource<Methods>
+    for (const methodName of Object.keys(schema) as Methods[]) {
       const methodSchema = schema[methodName]
-      resource[methodName] = (requestConfig = {}) => axiosInstance.request({
-        ...requestConfig,
-        ...methodSchema
-      } as AxiosRequestConfig)
+      let url = methodSchema.url || ''
+      url = `${resourceUrl}${url}`
+      resource[methodName] = (requestConfig = {}) =>
+        this.axiosInstance.request({
+          ...requestConfig,
+          ...methodSchema,
+          url,
+        })
     }
-    return resource as IBuildParamsExtendedRes<ResourceMethods>
-  }
-
-  protected _isBuildRapamsExtended<ResourceMethods extends string> (
-    buildParams: IBuildParams | IBuildParamsExtended<ResourceMethods>
-  ): buildParams is IBuildParamsExtended<ResourceMethods> {
-    return !!(buildParams as IBuildParamsExtended<ResourceMethods>).schema
-  }
-
-  protected _isAxiosResourceFactoryParams (
-    createParams: ICreateAxiosInstanceFromUrl | ICreateAxiosInstanceFactoryParams
-  ): createParams is ICreateAxiosInstanceFactoryParams {
-    return typeof createParams === 'object'
+    return resource
   }
 }

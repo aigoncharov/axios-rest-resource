@@ -1,2 +1,2 @@
-export * from './src/axios'
 export * from './src/resource'
+export * from './src/url-formatter'

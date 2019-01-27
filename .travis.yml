@@ -1,11 +1,6 @@
 language: node_js
 node_js:
   - 'lts/*'
-before_install:
-  - npm i -g npm@6.3.0
-install:
-  - npm ci
-  - npm i axios
 script:
   - npm run lint
   - npm test
