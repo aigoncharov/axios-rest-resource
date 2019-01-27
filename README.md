@@ -224,5 +224,5 @@ const resourceBuilder = new ResourceBuilder({
 })
 resourceBuilder.axiosInstance.interceptors.response.use(myCustomResponeInterceptor)
 
-export resourceBuilder
+export { resourceBuilder }
 ```
