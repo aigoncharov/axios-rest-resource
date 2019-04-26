@@ -42,7 +42,7 @@ describe(`${ResourceBuilder.name}`, () => {
       expect(typeof requestConfigRes).toBe('object')
       expect(requestConfigRes).toHaveProperty('method', methodSchema.method)
       expect(requestConfigRes).toHaveProperty('url')
-      expect((requestConfigRes.url as string).endsWith(`${resourceUrl}${methodSchema.url || ''}`)).toBeTruthy()
+      expect((requestConfigRes.url as string).indexOf(`${resourceUrl}${methodSchema.url || ''}`)).not.toBe(-1)
       const resourceMethodConfigHeadersAccept =
         resourceMethodConfig && resourceMethodConfig.headers && resourceMethodConfig.headers.Accept
       expect(requestConfigRes.headers).toHaveProperty('Accept', resourceMethodConfigHeadersAccept || 'application/json')
