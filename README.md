@@ -38,7 +38,7 @@ npm i axios-rest-resource axios
   // api/entity1.js
   import { resourceBuilder } from 'utils/resource'
 
-  export const entity1Resource = resourceBuilder.build({ url: '/entity1' })
+  export const entity1Resource = resourceBuilder.build('/entity1')
   // exports an object
   // {
   //   create: (requestConfig) => axiosPromise // sends POST http://localhost:3000/entity1,
@@ -103,15 +103,12 @@ axios-rest-resource applies [interceptorUrlFormatter](src/url-formatter.ts) inte
   import { resourceSchemaDefault } from 'axios-rest-resource'
   import { resourceBuilder } from 'utils/resource'
 
-  export const entity2Resource = resourceBuilder.build({
-    schema: {
-      ...resourceSchemaDefault,
-      doSomething: {
-        method: 'post',
-        url: '/do-something',
-      },
+  export const entity2Resource = resourceBuilder.build('/entity2', {
+    ...resourceSchemaDefault,
+    doSomething: {
+      method: 'post',
+      url: '/do-something',
     },
-    url: '/entity2',
   })
   // exports an object
   // {
@@ -164,14 +161,11 @@ You custom schema does not need to extend default schema if you do not want that
 // api/entity.js
 import { resourceBuilder } from 'utils/resource'
 
-export const entityResource = resourceBuilder.build({
-  schema: {
-    doSomething: {
-      method: 'post',
-      url: '/do-something',
-    },
+export const entityResource = resourceBuilder.build('/entity', {
+  doSomething: {
+    method: 'post',
+    url: '/do-something',
   },
-  url: '/entity',
 })
 // exports an object
 // {
@@ -188,12 +182,9 @@ import { resourceBuilder } from 'utils/resource'
 
 const { read, readOne } = resourceSchemaDefault
 
-export const entityResource = resourceBuilder.build({
-  schema: {
-    read,
-    readOne,
-  },
-  url: '/entity',
+export const entityResource = resourceBuilder.build('/entity', {
+  read,
+  readOne,
 })
 // exports an object
 // {
