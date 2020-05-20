@@ -40,7 +40,7 @@ export const interceptorUrlFormatter = (config: AxiosRequestConfig): AxiosReques
   for (const paramName of Object.keys(config.params)) {
     const param = config.params[paramName]
     if (config.url && config.url.indexOf(`{${paramName}}`) > -1) {
-      config.url = config.url.replace(`{${paramName}}`, function () { return param })
+      config.url = config.url.replace(`{${paramName}}`, () => param)
       delete config.params[paramName]
     }
   }
