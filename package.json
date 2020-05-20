@@ -20,14 +20,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keenondrums/axios-rest-resource.git"
+    "url": "git+https://github.com/aigoncharov/axios-rest-resource.git"
   },
-  "author": "keenondrums (andrey.goncharov+it@protonmail.com)",
+  "author": "Andrey Goncharov (andrey@goncharov.page)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/keenondrums/axios-rest-resource/issues"
+    "url": "https://github.com/aigoncharov/axios-rest-resource/issues"
   },
-  "homepage": "https://github.com/keenondrums/axios-rest-resource#readme",
+  "homepage": "https://github.com/aigoncharov/axios-rest-resource#readme",
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/moxios": "^0.4.9",
