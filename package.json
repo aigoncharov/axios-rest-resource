@@ -1,6 +1,6 @@
 {
   "name": "axios-rest-resource",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Schema-based HTTP client powered by axios. Built with Typescript. Heavily inspired by AngularJS' $resource.",
   "keywords": [
     "axios",
@@ -30,8 +30,8 @@
   "homepage": "https://github.com/keenondrums/axios-rest-resource#readme",
   "devDependencies": {
     "@types/jest": "^23.3.13",
-    "@types/moxios": "^0.4.8",
-    "axios": "^0.18.0",
+    "@types/moxios": "^0.4.9",
+    "axios": "^0.18.1",
     "doctoc": "^1.4.0",
     "husky": "^1.3.1",
     "jest": "^24.0.0",
