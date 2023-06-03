@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig, Method } from 'axios'
 import * as moxios from 'moxios'
 
 import { IAPIMethodSchema, IResourceSchema, ResourceBuilder, resourceSchemaDefault } from './resource'
@@ -144,7 +144,7 @@ describe(`${ResourceBuilder.name}`, () => {
           Accept: 'text/html',
           test: 'test',
         },
-        method: 'should not be overridden',
+        method: 'get' as Method,
         url: 'should not be overridden',
       }
       const resourceBuilder = new ResourceBuilder({ baseURL })
